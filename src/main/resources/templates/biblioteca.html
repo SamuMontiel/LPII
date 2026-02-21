@@ -7,8 +7,6 @@
 <body>
 
 <div class="library-container">
-
-    <!-- LEFT SIDE -->
     <div class="library-sidebar">
         <h2>Biblioteca</h2>
 
@@ -17,17 +15,13 @@
              onclick="mostrarJuego(this)"
              th:data-titulo="${juego.titulo}"
              th:data-descripcion="${juego.descripcion}"
-             th:data-precio="${juego.precio}"
              th:data-imagen="${juego.imagenUrl}">
 
             <span th:text="${juego.titulo}"></span>
         </div>
-
     </div>
-
-    <!-- RIGHT SIDE -->
     <div class="library-detail">
-        <div id="detalleContenido" class="detalle-animado">
+        <div id="detalleContenido">
             <h1>Selecciona un juego</h1>
             <p>Haz click en un juego de tu biblioteca</p>
         </div>
@@ -36,39 +30,59 @@
 </div>
 
 <script>
+
 function mostrarJuego(elemento) {
+    document.querySelectorAll(".library-item")
+        .forEach(item => item.classList.remove("activo"));
+
+    elemento.classList.add("activo");
 
     const titulo = elemento.dataset.titulo;
     const descripcion = elemento.dataset.descripcion;
-    const precio = elemento.dataset.precio;
     const imagen = elemento.dataset.imagen;
-
-    // Generamos valores dinámicos aquí
     const rating = (Math.random() * 5).toFixed(1);
     const horas = (Math.random() * 200).toFixed(1);
     const porcentaje = (rating / 5) * 100;
 
+    document.querySelector(".library-detail").style.background =
+        `linear-gradient(rgba(15,20,27,0.85), rgba(15,20,27,0.95)), url('${imagen}') center/cover no-repeat`;
+
     document.getElementById("detalleContenido").innerHTML = `
         <div class="detalle-header">
             <img src="${imagen}" class="library-img">
+
             <div class="detalle-info">
                 <h1>${titulo}</h1>
                 <p class="detalle-descripcion">${descripcion}</p>
 
                 <div class="stats">
-                    <p><strong>Horas jugadas:</strong> ${horas} hrs</p>
-                    <p><strong>Valoración:</strong> ⭐ ${rating} / 5</p>
+                    <p>☁ Estado en la nube: <span class="ok">Actualizado</span></p>
+                    <p>🕒 Última sesión: Hace 2 días</p>
+                    <p>⏳ Tiempo total jugado: ${horas} hrs</p>
+                    <p>⭐ Valoración: ${rating} / 5</p>
                 </div>
 
                 <div class="barra-aprobacion">
                     <div class="barra-fill" style="width:${porcentaje}%"></div>
                 </div>
 
-                <button class="btn-jugar">JUGAR</button>
+                <button class="btn-jugar" onclick="launchGame(this)">
+                    JUGAR
+                </button>
             </div>
         </div>
     `;
 }
+
+function launchGame(btn){
+    btn.innerText = "Iniciando...";
+    btn.classList.add("launching");
+
+    setTimeout(() => {
+        btn.innerText = "Jugando...";
+    }, 1500);
+}
+
 </script>
 
 </body>
