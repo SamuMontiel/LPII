@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${juego.titulo}">Detalle</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">VirtualHub</div>
+    <div class="nav-links">
+        <a th:href="@{/home}">Inicio</a>
+        <a th:href="@{/biblioteca}">Biblioteca</a>
+        <a th:href="@{/logout}">Cerrar sesión</a>
+    </div>
+</div>
+
+<div class="detalle-container">
+
+    <div class="detalle-imagen">
+        <img th:src="@{${juego.imagenUrl}}" alt="Juego">
+    </div>
+
+    <div class="detalle-info">
+        <h1 th:text="${juego.titulo}"></h1>
+
+        <p class="detalle-descripcion"
+           th:text="${juego.descripcion}">
+        </p>
+
+        <p class="detalle-precio"
+           th:text="'$' + ${juego.precio}">
+        </p>
+
+        <!-- Si ya lo tiene -->
+        <div th:if="${usuario.juegos.contains(juego)}">
+            <button class="btn-disabled" disabled>
+                Ya está en tu biblioteca
+            </button>
+        </div>
+
+        <!-- Si no lo tiene -->
+        <div th:if="${!usuario.juegos.contains(juego)}">
+            <form th:action="@{/comprar/{id}(id=${juego.id})}" method="post">
+                <button class="btn-comprar">
+                    Comprar ahora
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
