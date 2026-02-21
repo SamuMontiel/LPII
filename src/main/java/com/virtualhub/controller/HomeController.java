@@ -4,7 +4,7 @@ import com.virtualhub.model.Usuario;
 import com.virtualhub.model.Juego;
 import com.virtualhub.service.UsuarioService;
 import com.virtualhub.service.JuegoService;
-
+//sdsdsddsds
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
