@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login - VirtualHub</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
 
 <div class="login-container">
     <div class="login-box">
 
-        <h2>🎮 VirtualHub</h2>
+        <h2> VirtualHub</h2>
 
         <div th:if="${param.error}" class="error-message">
             Email o contraseña incorrectos
@@ -29,6 +29,227 @@
 
     </div>
 </div>
+
+<script th:src="@{/js/particles.js}"></script>
+<script>
+/* VirtualHub - Partículas integradas para fondo y área de login (discretas, eficientes) */
+(function () {
+  const CONFIG = {
+    bg: { MIN: 8, MAX: 40, SIZE: { min: 0.8, max: 1.6 }, SPEED: { min: 0.03, max: 0.18 }, ALPHA: { min: 0.06, max: 0.18 } },
+    login: { MIN: 10, MAX: 60, SIZE: { min: 0.6, max: 2.2 }, SPEED: { min: 0.15, max: 0.6 }, LINK_DISTANCE: 120, LINK_OPACITY: 0.12 }
+  };
+
+  let bg = { canvas: null, ctx: null, particles: [], raf: null, dpr: 1, w: 0, h: 0, resizeTimer: null, reduced: false };
+  let login = { canvas: null, ctx: null, particles: [], raf: null, dpr: 1, w: 0, h: 0, resizeTimer: null, reduced: false };
+
+  /* util */
+  const rand = (a, b) => Math.random() * (b - a) + a;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  /* create canvases */
+  function createCanvas(id, zIndex) {
+    if (document.getElementById(id)) return document.getElementById(id);
+    const c = document.createElement('canvas');
+    c.id = id;
+    c.style.position = 'fixed';
+    c.style.inset = '0';
+    c.style.pointerEvents = 'none';
+    c.style.zIndex = String(zIndex);
+    c.style.opacity = id === 'vh-bg-particles-canvas' ? '0.55' : '0.9';
+    c.style.mixBlendMode = 'screen';
+    document.body.appendChild(c);
+    return c;
+  }
+
+  /* init both canvases */
+  function initCanvases() {
+    bg.canvas = createCanvas('vh-bg-particles-canvas', 0);
+    bg.ctx = bg.canvas.getContext('2d');
+    login.canvas = createCanvas('vh-particles-canvas', 1);
+    login.ctx = login.canvas.getContext('2d');
+    setupListeners();
+    resizeAll();
+  }
+
+  /* listeners */
+  function setupListeners() {
+    window.addEventListener('resize', () => {
+      clearTimeout(bg.resizeTimer); clearTimeout(login.resizeTimer);
+      bg.resizeTimer = setTimeout(resizeAll, 120);
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { stopAll(); } else { startAll(); }
+    });
+
+    if (window.matchMedia) {
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const handler = (e) => { bg.reduced = e.matches; login.reduced = e.matches; if (e.matches) stopAll(); else startAll(); };
+      bg.reduced = mq.matches; login.reduced = mq.matches;
+      if (mq.addEventListener) mq.addEventListener('change', handler); else if (mq.addListener) mq.addListener(handler);
+    }
+  }
+
+  /* resize and init particles */
+  function resizeAll() {
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const w = window.innerWidth, h = window.innerHeight;
+
+    // background canvas
+    bg.dpr = dpr; bg.w = w; bg.h = h;
+    bg.canvas.width = Math.round(w * dpr); bg.canvas.height = Math.round(h * dpr);
+    bg.canvas.style.width = w + 'px'; bg.canvas.style.height = h + 'px';
+    bg.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    initBgParticles();
+
+    // login canvas (smaller effective area around .login-container)
+    login.dpr = dpr; login.w = w; login.h = h;
+    login.canvas.width = Math.round(w * dpr); login.canvas.height = Math.round(h * dpr);
+    login.canvas.style.width = w + 'px'; login.canvas.style.height = h + 'px';
+    login.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    initLoginParticles();
+
+    if (!bg.reduced && !document.hidden) startAll();
+  }
+
+  /* init background particles (very discrete) */
+  function initBgParticles() {
+    bg.particles = [];
+    const area = bg.w * bg.h;
+    const base = Math.sqrt(area) / 20;
+    const count = Math.round(clamp(base, CONFIG.bg.MIN, CONFIG.bg.MAX));
+    for (let i = 0; i < count; i++) {
+      bg.particles.push({
+        x: Math.random() * bg.w,
+        y: Math.random() * bg.h,
+        r: rand(CONFIG.bg.SIZE.min, CONFIG.bg.SIZE.max),
+        vx: (Math.random() - 0.5) * rand(CONFIG.bg.SPEED.min, CONFIG.bg.SPEED.max),
+        vy: rand(CONFIG.bg.SPEED.min * 0.2, CONFIG.bg.SPEED.max * 0.6),
+        alpha: rand(CONFIG.bg.ALPHA.min, CONFIG.bg.ALPHA.max),
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  /* init login-area particles (slightly more lively, but still discrete) */
+  function initLoginParticles() {
+    login.particles = [];
+    const area = login.w * login.h;
+    const base = Math.sqrt(area) / 12;
+    const count = Math.round(clamp(base, CONFIG.login.MIN, CONFIG.login.MAX));
+    for (let i = 0; i < count; i++) {
+      login.particles.push({
+        x: Math.random() * login.w,
+        y: Math.random() * login.h,
+        r: rand(CONFIG.login.SIZE.min, CONFIG.login.SIZE.max),
+        vx: (Math.random() - 0.5) * rand(CONFIG.login.SPEED.min, CONFIG.login.SPEED.max),
+        vy: (Math.random() - 0.5) * rand(CONFIG.login.SPEED.min, CONFIG.login.SPEED.max),
+        alpha: rand(0.35, 0.95)
+      });
+    }
+  }
+
+  /* draw background */
+  function drawBg() {
+    const ctx = bg.ctx;
+    ctx.clearRect(0, 0, bg.w, bg.h);
+    for (let p of bg.particles) {
+      p.phase += 0.0025;
+      const floatY = Math.sin(p.phase) * (p.r * 0.8);
+      const grad = ctx.createRadialGradient(p.x, p.y + floatY, 0, p.x, p.y + floatY, p.r * 6);
+      grad.addColorStop(0, `rgba(107,224,255,${p.alpha})`);
+      grad.addColorStop(0.6, `rgba(0,176,255,${p.alpha * 0.35})`);
+      grad.addColorStop(1, `rgba(6,18,36,0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y + floatY, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  /* draw login particles with subtle linking */
+  function drawLogin() {
+    const ctx = login.ctx;
+    ctx.clearRect(0, 0, login.w, login.h);
+    // particles
+    for (let p of login.particles) {
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 6);
+      grad.addColorStop(0, `rgba(107,224,255,${p.alpha * 0.9})`);
+      grad.addColorStop(0.4, `rgba(0,176,255,${p.alpha * 0.45})`);
+      grad.addColorStop(1, `rgba(6,18,36,0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // links
+    for (let i = 0; i < login.particles.length; i++) {
+      for (let j = i + 1; j < login.particles.length; j++) {
+        const a = login.particles[i], b = login.particles[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONFIG.login.LINK_DISTANCE) {
+          const o = (1 - dist / CONFIG.login.LINK_DISTANCE) * CONFIG.login.LINK_OPACITY * Math.min(a.alpha, b.alpha);
+          ctx.strokeStyle = `rgba(107,224,255,${o})`;
+          ctx.lineWidth = 0.7;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  /* step functions */
+  function stepBg() {
+    for (let p of bg.particles) {
+      p.x += p.vx;
+      p.y += p.vy * (0.6 + Math.sin(p.phase) * 0.4);
+      if (p.x < -20) p.x = bg.w + 20;
+      if (p.x > bg.w + 20) p.x = -20;
+      if (p.y < -40) p.y = bg.h + 40;
+      if (p.y > bg.h + 40) p.y = -40;
+    }
+    drawBg();
+    bg.raf = requestAnimationFrame(stepBg);
+  }
+
+  function stepLogin() {
+    for (let p of login.particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < -20) p.x = login.w + 20;
+      if (p.x > login.w + 20) p.x = -20;
+      if (p.y < -40) p.y = login.h + 40;
+      if (p.y > login.h + 40) p.y = -40;
+    }
+    drawLogin();
+    login.raf = requestAnimationFrame(stepLogin);
+  }
+
+  /* controls */
+  function startAll() {
+    if (bg.reduced || document.hidden) return;
+    if (!bg.raf) bg.raf = requestAnimationFrame(stepBg);
+    if (!login.raf) login.raf = requestAnimationFrame(stepLogin);
+  }
+  function stopAll() {
+    if (bg.raf) cancelAnimationFrame(bg.raf); bg.raf = null;
+    if (login.raf) cancelAnimationFrame(login.raf); login.raf = null;
+  }
+
+  /* expose minimal API */
+  window.VHParticlesIntegrated = { start: startAll, stop: stopAll, refresh: resizeAll };
+
+  /* init on DOM ready */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCanvases);
+  } else {
+    initCanvases();
+  }
+})();
+</script>
 
 </body>
 </html>
