@@ -33,7 +33,7 @@ public class UsuarioController {
 
 
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
-            model.addAttribute("error", "El email está registrado");
+            model.addAttribute("error", "El email ya está registrado");
             return "registro";
         }
 
