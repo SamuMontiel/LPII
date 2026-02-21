@@ -1,9 +1,9 @@
 package com.virtualhub.model;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "logros")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +15,10 @@ public class Logro {
     private Long id;
 
     private String nombre;
-    private String descripcion;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "juego_id")

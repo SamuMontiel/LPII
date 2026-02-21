@@ -3,114 +3,167 @@
 <head>
     <title>Biblioteca - VirtualHub</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
-<body>
+
+<body class="steam-body">
 
 <div class="library-container">
 
-    <div class="library-sidebar">
-        <h2>Biblioteca</h2>
 
-        <div th:each="uj : ${biblioteca}"
-             class="library-item"
-             onclick="mostrarJuego(this)"
-             th:data-id="${uj.juego.id}"
-             th:data-titulo="${uj.juego.titulo}"
-             th:data-descripcion="${uj.juego.descripcion}"
-             th:data-imagen="${uj.juego.imagenUrl}"
-             th:data-horas="${uj.horasJugadas}"
-             th:data-sesion="${uj.ultimaSesion}">
+    <div class="library-sidebar">
+        <h3 class="library-title">BIBLIOTECA</h3>
+
+        <div class="game-item"
+             th:each="uj,iter : ${biblioteca}"
+             th:classappend="${iter.index == 0} ? ' active'"
+             th:onclick="'mostrarJuego(' + ${uj.juego.id} + ', this)'">
 
             <span th:text="${uj.juego.titulo}"></span>
+
+            <span th:if="${uj.jugando}" class="playing-dot">
+                🟢
+            </span>
         </div>
     </div>
 
-    <div class="library-detail">
-        <div id="detalleContenido">
-            <h1>Selecciona un juego</h1>
-            <p>Haz click en un juego de tu biblioteca</p>
+   
+    <div class="library-main">
+
+        <div th:each="uj,iter : ${biblioteca}"
+             th:id="'panel-' + ${uj.juego.id}"
+             th:class="'game-panel ' + (${iter.index == 0} ? 'visible' : '')">
+
+            <div class="game-banner"
+                 th:style="'background-image:url(' + ${uj.juego.imagenUrl} + ')'">
+            </div>
+
+            <div class="game-details">
+
+                <h1 th:text="${uj.juego.titulo}"></h1>
+                <p th:text="${uj.juego.descripcion}"></p>
+
+                
+                <div class="hours">
+                    ⏱ Horas jugadas:
+                    <span th:text="${#numbers.formatDecimal(uj.horasJugadas,1,2)}"></span>
+                </div>
+
+                
+                <div class="last-session"
+                     th:if="${uj.ultimaSesion != null}">
+                    Última vez jugado:
+                    <span th:text="${#temporals.format(uj.ultimaSesion,'dd/MM/yyyy HH:mm')}"></span>
+                </div>
+
+               
+                <div class="live-status"
+                     th:if="${uj.jugando}">
+                    🟢 Jugando ahora
+                    <span class="timer"
+                          th:attr="data-inicio=${uj.horaInicio}">
+                        00:00
+                    </span>
+                </div>
+
+                
+                <button class="btn-play"
+                        th:attr="data-id=${uj.juego.id}"
+                        th:if="${!uj.jugando}"
+                        onclick="iniciarJuego(this)">
+                    ▶ JUGAR
+                </button>
+
+                <button class="btn-play stop"
+                        th:attr="data-id=${uj.juego.id}"
+                        th:if="${uj.jugando}"
+                        onclick="detenerJuego(this)">
+                    ■ DETENER
+                </button>
+
+            </div>
         </div>
+
     </div>
 
-</div>
-<div id="launchModal" class="launch-modal">
-    <div class="launch-box">
-        <h2>Juego ejecutándose...</h2>
-        <p>Tiempo en sesión...</p>
-        <button class="btn-jugar" onclick="cerrarJuego()">Cerrar juego</button>
-    </div>
 </div>
 
 <script>
 
-let startTime;
-let juegoActualId;
+function mostrarJuego(id, element) {
 
-function mostrarJuego(elemento) {
+    document.querySelectorAll(".game-panel")
+        .forEach(p => p.classList.remove("visible"));
 
-    document.querySelectorAll(".library-item")
-        .forEach(item => item.classList.remove("activo"));
+    document.querySelectorAll(".game-item")
+        .forEach(i => i.classList.remove("active"));
 
-    elemento.classList.add("activo");
+    document.getElementById("panel-" + id)
+        .classList.add("visible");
 
-    const id = elemento.dataset.id;
-    const titulo = elemento.dataset.titulo;
-    const descripcion = elemento.dataset.descripcion;
-    const imagen = elemento.dataset.imagen;
-    const horas = elemento.dataset.horas;
-    const sesion = elemento.dataset.sesion;
+    element.classList.add("active");
 
-    document.querySelector(".library-detail").style.background =
-        `linear-gradient(rgba(15,20,27,0.9), rgba(15,20,27,0.95)), 
-         url('${imagen}') center/cover no-repeat`;
+    const banner =
+        document.querySelector("#panel-" + id + " .game-banner")
+        .style.backgroundImage;
 
-    document.getElementById("detalleContenido").innerHTML = `
-        <div class="detalle-header">
-            <img src="${imagen}" class="library-img">
-
-            <div class="detalle-info">
-                <h1>${titulo}</h1>
-                <p class="detalle-descripcion">${descripcion}</p>
-
-                <div class="stats">
-                    <p>⏳ Horas jugadas: ${parseFloat(horas).toFixed(2)}</p>
-                    <p>🕒 Última sesión: ${sesion ? sesion : "Nunca"}</p>
-                </div>
-
-                <button class="btn-jugar"
-                        onclick="launchGame(${id})">
-                    JUGAR
-                </button>
-            </div>
-        </div>
-    `;
+    document.querySelector(".library-main")
+        .style.backgroundImage = banner;
 }
 
-function launchGame(id){
 
-    juegoActualId = id;
-    startTime = new Date();
+function iniciarJuego(button) {
 
-    const modal = document.getElementById("launchModal");
-    modal.style.display = "flex";
-}
+    const gameId = button.dataset.id;
+    const csrf = document.querySelector('meta[name="_csrf"]').content;
 
-function cerrarJuego(){
-
-    const endTime = new Date();
-    const minutos = (endTime - startTime) / 60000;
-
-    fetch(`/cerrar-juego/${juegoActualId}`, {
+    fetch("/jugar/" + gameId, {
         method: "POST",
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `minutos=${minutos}`
-    }).then(() => {
-        location.reload();
-    });
+            "X-CSRF-TOKEN": csrf
+        }
+    }).then(() => location.reload());
 }
 
+function detenerJuego(button) {
+
+    const gameId = button.dataset.id;
+    const csrf = document.querySelector('meta[name="_csrf"]').content;
+
+    fetch("/cerrar-juego/" + gameId, {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": csrf
+        }
+    }).then(() => location.reload());
+}
+
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    document.querySelectorAll(".timer").forEach(timer => {
+
+        const inicioStr = timer.dataset.inicio;
+
+        if (!inicioStr) return;
+
+        const inicio = new Date(inicioStr);
+
+        setInterval(() => {
+
+            const ahora = new Date();
+            const diff = Math.floor((ahora - inicio) / 1000);
+
+            let min = Math.floor(diff / 60);
+            let sec = diff % 60;
+
+            timer.innerText =
+                String(min).padStart(2,'0') + ":" +
+                String(sec).padStart(2,'0');
+
+        }, 1000);
+    });
+});
 </script>
 
 </body>

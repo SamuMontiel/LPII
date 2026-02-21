@@ -1,10 +1,15 @@
 package com.virtualhub.controller;
 
 import com.virtualhub.model.Usuario;
+import com.virtualhub.model.UsuarioJuego;
 import com.virtualhub.model.Juego;
 import com.virtualhub.service.UsuarioService;
 import com.virtualhub.service.JuegoService;
 import com.virtualhub.service.UsuarioJuegoService;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -26,15 +31,19 @@ public class HomeController {
 
         Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
 
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("juegos", juegoService.listarTodos());
+        List<Juego> juegos = juegoService.listarTodos();
+        List<UsuarioJuego> biblioteca = usuarioJuegoService.obtenerBiblioteca(usuario);
 
-        model.addAttribute("biblioteca",
-                usuarioJuegoService.obtenerBiblioteca(usuario));
+        Set<Long> juegosComprados = biblioteca.stream()
+                .map(uj -> uj.getJuego().getId())
+                .collect(Collectors.toSet());
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("juegos", juegos);
+        model.addAttribute("juegosComprados", juegosComprados);
 
         return "home";
     }
-
     @Transactional
     @PostMapping("/comprar/{id}")
     public String comprarJuego(@PathVariable Long id,

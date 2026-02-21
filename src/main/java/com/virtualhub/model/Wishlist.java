@@ -2,13 +2,12 @@ package com.virtualhub.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioLogro {
+public class Wishlist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +18,6 @@ public class UsuarioLogro {
     private Usuario usuario;
 
     @ManyToOne
-    @JoinColumn(name = "logro_id")
-    private Logro logro;
-
-    private LocalDateTime fechaDesbloqueo;
+    @JoinColumn(name = "juego_id")
+    private Juego juego;
 }

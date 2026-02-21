@@ -1,66 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>VirtualHub - Inicio</title>
+    <title>VirtualHub - Tienda</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<div class="navbar">
-    <div class="logo">🎮 VirtualHub</div>
-    <div class="nav-links">
-        <a th:href="@{/biblioteca}">Biblioteca</a>
-        <a th:href="@{/logout}">Cerrar sesión</a>
+<header class="navbar">
+    <div class="logo">VirtualHub</div>
+
+    <div class="user-info">
+        <span th:text="${usuario.nombre}"></span>
+        <span class="saldo">
+            S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
+        </span>
+
+        <a th:href="@{/biblioteca}" class="btn-nav">Biblioteca</a>
+
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn-logout">Cerrar sesión</button>
+        </form>
     </div>
-</div>
+</header>
 
-<div class="main-container">
+<main class="store-container">
 
-    <!-- PANEL USUARIO -->
-    <div class="user-panel">
-        <h2 th:text="'Bienvenido, ' + ${usuario.nombre}"></h2>
-        <p class="saldo">
-            Saldo disponible:
-            <span th:text="'$' + ${usuario.saldo}"></span>
-        </p>
-    </div>
+    <h2 class="section-title">Tienda</h2>
 
-    <!-- GRID JUEGOS -->
-    <div class="game-grid">
+    <div class="games-grid">
 
         <div class="game-card" th:each="juego : ${juegos}">
 
-            <img th:src="@{${juego.imagenUrl}}" alt="Juego">
+            <img th:src="@{${juego.imagenUrl}}" class="game-image">
 
-            <h3>
-                <a th:href="@{/juego/{id}(id=${juego.id})}"
-                   th:text="${juego.titulo}">
-                </a>
-            </h3>
+            <div class="game-info">
+                <h3 th:text="${juego.titulo}"></h3>
 
-            <p th:text="${juego.descripcion}"></p>
+                <p th:text="${juego.descripcion}"></p>
 
-            <p class="precio"
-               th:text="'$' + ${juego.precio}">
-            </p>
+                <div class="price">
+                    S/ <span th:text="${juego.precio}"></span>
+                </div>
 
-            <!-- 🔥 VERIFICACIÓN CORRECTA DE BIBLIOTECA -->
-            <div th:if="${#lists.contains(
-                #lists.map(biblioteca, 'juego'), juego)}">
-
-                <button class="btn-disabled" disabled>
-                    Ya lo tienes
-                </button>
-            </div>
-
-            <div th:unless="${#lists.contains(
-                #lists.map(biblioteca, 'juego'), juego)}">
-
-                <form th:action="@{/comprar/{id}(id=${juego.id})}" method="post">
-                    <button class="btn-comprar" type="submit">
-                        Comprar
+                <!-- BOTÓN DINÁMICO CORRECTO -->
+                <div th:if="${juegosComprados.contains(juego.id)}">
+                    <button class="btn-disabled" disabled>
+                        Ya lo tienes
                     </button>
-                </form>
+                </div>
+
+                <div th:unless="${juegosComprados.contains(juego.id)}">
+                    <form th:action="@{/comprar/{id}(id=${juego.id})}" method="post">
+                        <button class="btn-comprar" type="submit">
+                            Comprar
+                        </button>
+                    </form>
+                </div>
 
             </div>
 
@@ -68,7 +63,7 @@
 
     </div>
 
-</div>
+</main>
 
 </body>
 </html>

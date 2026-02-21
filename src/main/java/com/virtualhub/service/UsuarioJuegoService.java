@@ -1,68 +1,113 @@
 package com.virtualhub.service;
 
-import com.virtualhub.model.*;
+import com.virtualhub.model.Juego;
+import com.virtualhub.model.Usuario;
+import com.virtualhub.model.UsuarioJuego;
 import com.virtualhub.repository.UsuarioJuegoRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioJuegoService {
 
-    private final UsuarioJuegoRepository repository;
-    private final LogroService logroService; 
+    private final UsuarioJuegoRepository usuarioJuegoRepository;
+
+    public List<UsuarioJuego> obtenerBiblioteca(Usuario usuario) {
+        return usuarioJuegoRepository.findByUsuario(usuario);
+    }
 
     public void agregarJuego(Usuario usuario, Juego juego) {
 
-        if (repository.findByUsuarioAndJuego(usuario, juego).isPresent()) {
-            return; 
+        if (usuarioJuegoRepository
+                .findByUsuarioAndJuego(usuario, juego)
+                .isPresent()) {
+            return;
         }
 
         UsuarioJuego uj = UsuarioJuego.builder()
                 .usuario(usuario)
                 .juego(juego)
                 .horasJugadas(0.0)
+                .totalSesiones(0)
+                .jugando(false)
+                .horaInicio(null)
+                .ultimaSesion(null)
                 .build();
 
-        repository.save(uj);
+        usuarioJuegoRepository.save(uj);
     }
 
+    @Transactional
+    public void iniciarJuego(Usuario usuario, Juego juego) {
 
-    public void registrarSesion(Usuario usuario,
-                                Juego juego,
-                                double minutosJugados) {
+        List<UsuarioJuego> biblioteca =
+                usuarioJuegoRepository.findByUsuario(usuario);
 
-        UsuarioJuego uj = repository
+        // 🔥 SOLO UN JUEGO ACTIVO A LA VEZ
+        for (UsuarioJuego item : biblioteca) {
+            if (Boolean.TRUE.equals(item.getJugando())) {
+                item.setJugando(false);
+                item.setHoraInicio(null);
+            }
+        }
+
+        UsuarioJuego uj = usuarioJuegoRepository
                 .findByUsuarioAndJuego(usuario, juego)
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new RuntimeException("Juego no encontrado"));
 
-        double horas = minutosJugados / 60.0;
+        // Seguridad contra null
+        if (uj.getTotalSesiones() == null) {
+            uj.setTotalSesiones(0);
+        }
 
-        uj.setHorasJugadas(uj.getHorasJugadas() + horas);
+        if (uj.getHorasJugadas() == null) {
+            uj.setHorasJugadas(0.0);
+        }
+
+        uj.setJugando(true);
+        uj.setHoraInicio(LocalDateTime.now());
         uj.setUltimaSesion(LocalDateTime.now());
-
-        repository.save(uj);
-
-        double totalHoras = uj.getHorasJugadas();
-
-        if (totalHoras >= 1) {
-            logroService.desbloquear(usuario, juego, "Primer Paso");
-        }
-
-        if (totalHoras >= 5) {
-            logroService.desbloquear(usuario, juego, "Veterano");
-        }
-
-        if (totalHoras >= 20) {
-            logroService.desbloquear(usuario, juego, "Adicto");
-        }
+        uj.setTotalSesiones(uj.getTotalSesiones() + 1);
+ 
+        usuarioJuegoRepository.saveAll(biblioteca);
     }
 
-    public List<UsuarioJuego> obtenerBiblioteca(Usuario usuario) {
-        return repository.findByUsuario(usuario);
+    @Transactional
+    public void cerrarJuego(Usuario usuario, Juego juego) {
+
+        UsuarioJuego uj = usuarioJuegoRepository
+                .findByUsuarioAndJuego(usuario, juego)
+                .orElseThrow(() ->
+                        new RuntimeException("Juego no encontrado"));
+
+        if (Boolean.TRUE.equals(uj.getJugando())
+                && uj.getHoraInicio() != null) {
+
+            Duration duracion = Duration.between(
+                    uj.getHoraInicio(),
+                    LocalDateTime.now());
+
+            double horas = duracion.toMinutes() / 60.0;
+
+            if (uj.getHorasJugadas() == null) {
+                uj.setHorasJugadas(0.0);
+            }
+
+            uj.setHorasJugadas(uj.getHorasJugadas() + horas);
+            uj.setUltimaSesion(LocalDateTime.now());
+        }
+
+        uj.setJugando(false);
+        uj.setHoraInicio(null);
+
+        usuarioJuegoRepository.save(uj);
     }
 }

@@ -1,11 +1,12 @@
 package com.virtualhub.repository;
 
-import com.virtualhub.model.*;
+import com.virtualhub.model.UsuarioLogro;
+import com.virtualhub.model.Usuario;
+import com.virtualhub.model.Juego;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+public interface UsuarioLogroRepository
+        extends JpaRepository<UsuarioLogro, Long> {
 
-public interface UsuarioLogroRepository extends JpaRepository<UsuarioLogro, Long> {
-
-    Optional<UsuarioLogro> findByUsuarioAndLogro(Usuario usuario, Logro logro);
+    int countByUsuarioAndLogroJuego(Usuario usuario, Juego juego);
 }

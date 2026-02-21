@@ -24,7 +24,8 @@ public class BibliotecaController {
     public String biblioteca(Model model,
                              Authentication authentication) {
 
-        Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
+        Usuario usuario =
+                usuarioService.buscarPorEmail(authentication.getName());
 
         model.addAttribute("biblioteca",
                 usuarioJuegoService.obtenerBiblioteca(usuario));
@@ -32,15 +33,30 @@ public class BibliotecaController {
         return "biblioteca";
     }
 
+
+    @PostMapping("/jugar/{id}")
+    @ResponseBody
+    public void jugar(@PathVariable Long id,
+                      Authentication authentication) {
+
+        Usuario usuario =
+                usuarioService.buscarPorEmail(authentication.getName());
+
+        Juego juego = juegoService.buscarPorId(id);
+
+        usuarioJuegoService.iniciarJuego(usuario, juego);
+    }
+
     @PostMapping("/cerrar-juego/{id}")
     @ResponseBody
     public void cerrarJuego(@PathVariable Long id,
-                            @RequestParam double minutos,
                             Authentication authentication) {
 
-        Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
+        Usuario usuario =
+                usuarioService.buscarPorEmail(authentication.getName());
+
         Juego juego = juegoService.buscarPorId(id);
 
-        usuarioJuegoService.registrarSesion(usuario, juego, minutos);
+        usuarioJuegoService.cerrarJuego(usuario, juego);
     }
 }

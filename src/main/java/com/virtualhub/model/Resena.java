@@ -6,22 +6,21 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "resenas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Resena {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int puntuacion; // 1 a 5
+    private int puntuacion;
+
+    private String comentario;
 
     private boolean recomendado;
-
-    @Column(length = 1000)
-    private String comentario;
 
     private LocalDateTime fecha;
 

@@ -769,4 +769,395 @@ body {
     border-radius: 10px;
     text-align: center;
 }
+/* Fondo Steam */
+.steam-body {
+    background: #1b2838;
+    color: #c7d5e0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
 
+/* Layout */
+.library-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.library-sidebar {
+    width: 250px;
+    background: #171a21;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.library-title {
+    color: #66c0f4;
+    margin-bottom: 20px;
+}
+
+.game-item {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.game-item:hover {
+    background: #2a475e;
+}
+
+/* Main */
+.library-main {
+    flex: 1;
+    padding: 40px;
+}
+
+.game-banner img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.game-details {
+    margin-top: 20px;
+}
+
+.hours {
+    margin: 15px 0;
+    font-size: 18px;
+}
+
+/* Play Button */
+.btn-play {
+    background: linear-gradient(to right, #5cdb5c, #2fa32f);
+    border: none;
+    padding: 15px 40px;
+    font-size: 20px;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-play:hover {
+    transform: scale(1.05);
+}
+
+/* Modal */
+.launch-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.launch-content {
+    text-align: center;
+}
+
+.loader {
+    border: 6px solid #ccc;
+    border-top: 6px solid #66c0f4;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 20px auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.steam-body {
+    background: #1b2838;
+    color: #c7d5e0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.library-container {
+    display: flex;
+    height: 100vh;
+}
+
+.library-sidebar {
+    width: 260px;
+    background: #171a21;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.library-title {
+    color: #66c0f4;
+    margin-bottom: 20px;
+}
+
+.game-item {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.game-item:hover {
+    background: #2a475e;
+}
+
+.game-item.active {
+    background: #2a475e;
+}
+
+.library-main {
+    flex: 1;
+    padding: 40px;
+    position: relative;
+}
+
+.game-panel {
+    display: none;
+    animation: fade 0.3s ease-in-out;
+}
+
+.game-panel.visible {
+    display: block;
+}
+
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.game-banner {
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+}
+
+.game-details {
+    margin-top: 20px;
+}
+
+.hours {
+    margin: 15px 0;
+    font-size: 18px;
+}
+
+.last-session {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #8f98a0;
+}
+
+.btn-play {
+    background: linear-gradient(to right, #5cdb5c, #2fa32f);
+    border: none;
+    padding: 15px 40px;
+    font-size: 20px;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-play:hover {
+    transform: scale(1.05);
+}
+
+.achievements {
+    margin-top: 25px;
+}
+
+.achievement-item {
+    background: #2a475e;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+}
+
+.launch-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    justify-content: center;
+    align-items: center;
+}
+
+.launch-content {
+    text-align: center;
+}
+
+.loader {
+    border: 6px solid #ccc;
+    border-top: 6px solid #66c0f4;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 20px auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.library-main {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    transition: background 0.5s ease;
+}
+
+.library-main::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.6);
+}
+.steam-body {
+    background: #1b2838;
+    color: #c7d5e0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.library-container {
+    display: flex;
+    height: 100vh;
+}
+
+.library-sidebar {
+    width: 260px;
+    background: #171a21;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.library-title {
+    color: #66c0f4;
+    margin-bottom: 20px;
+}
+
+.game-item {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.game-item:hover {
+    background: #2a475e;
+}
+
+.game-item.active {
+    background: #2a475e;
+}
+
+.playing-dot {
+    float: right;
+}
+
+.library-main {
+    flex: 1;
+    padding: 40px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.library-main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.6);
+    z-index: 0;
+}
+
+.game-panel {
+    display: none;
+    position: relative;
+    z-index: 1;
+}
+
+.game-panel.visible {
+    display: block;
+}
+
+.game-banner {
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+}
+
+.btn-play {
+    background: linear-gradient(to right, #5cdb5c, #2fa32f);
+    border: none;
+    padding: 15px 40px;
+    font-size: 20px;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-play:hover {
+    transform: scale(1.05);
+}
+
+.achievement-item {
+    background: #2a475e;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+}
+
+.launch-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    justify-content: center;
+    align-items: center;
+}
+
+.launch-content {
+    text-align: center;
+}
+
+.loader {
+    border: 6px solid #ccc;
+    border-top: 6px solid #66c0f4;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 20px auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.progress-bar {
+    width: 300px;
+    height: 12px;
+    background: #2a475e;
+    border-radius: 6px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #66c0f4, #2fa32f);
+    transition: width 0.5s ease;
+}
+.btn-play.stop {
+    background: #c0392b;
+}

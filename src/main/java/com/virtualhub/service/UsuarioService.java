@@ -17,7 +17,6 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // 🔥 SOLO PARA REGISTRO
     public Usuario guardarUsuario(Usuario usuario) {
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
