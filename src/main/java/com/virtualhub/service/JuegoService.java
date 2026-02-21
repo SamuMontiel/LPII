@@ -1,8 +1,8 @@
 package com.virtualhub.service;
 
-import org.springframework.stereotype.Service;
 import com.virtualhub.model.Juego;
 import com.virtualhub.repository.JuegoRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -15,15 +15,12 @@ public class JuegoService {
         this.juegoRepository = juegoRepository;
     }
 
-    public List<Juego> listarJuegos() {
+    public List<Juego> listarTodos() {
         return juegoRepository.findAll();
     }
 
-    public Juego guardarJuego(Juego juego) {
-        return juegoRepository.save(juego);
-    }
     public Juego buscarPorId(Long id) {
-        return juegoRepository.findById(id).orElseThrow();
+        return juegoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
     }
-
 }
