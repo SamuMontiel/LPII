@@ -18,8 +18,10 @@
              th:data-titulo="${juego.titulo}"
              th:data-descripcion="${juego.descripcion}"
              th:data-precio="${juego.precio}"
-             th:data-imagen="${juego.imagenUrl}">
-             
+             th:data-imagen="${juego.imagenUrl}"
+             th:data-rating="${#numbers.formatDecimal(T(java.lang.Math).random()*5,1,1)}"
+             th:data-horas="${T(java.lang.Math).random()*200}">
+
             <span th:text="${juego.titulo}"></span>
         </div>
 
@@ -27,14 +29,10 @@
 
     <!-- RIGHT SIDE -->
     <div class="library-detail">
-
-        <div id="detalleContenido">
-
+        <div id="detalleContenido" class="detalle-animado">
             <h1>Selecciona un juego</h1>
             <p>Haz click en un juego de tu biblioteca</p>
-
         </div>
-
     </div>
 
 </div>
@@ -42,18 +40,39 @@
 <script>
 function mostrarJuego(elemento) {
 
-    const titulo = elemento.getAttribute("data-titulo");
-    const descripcion = elemento.getAttribute("data-descripcion");
-    const precio = elemento.getAttribute("data-precio");
-    const imagen = elemento.getAttribute("data-imagen");
+    const titulo = elemento.dataset.titulo;
+    const descripcion = elemento.dataset.descripcion;
+    const precio = elemento.dataset.precio;
+    const imagen = elemento.dataset.imagen;
+    const rating = parseFloat(elemento.dataset.rating).toFixed(1);
+    const horas = parseFloat(elemento.dataset.horas).toFixed(1);
+
+    const porcentaje = (rating / 5) * 100;
 
     document.getElementById("detalleContenido").innerHTML = `
-        <img src="${imagen}" class="library-img">
-        <h1>${titulo}</h1>
-        <p>${descripcion}</p>
-        <p class="precio">$${precio}</p>
-        <button class="btn-jugar">JUGAR</button>
+        <div class="detalle-header">
+            <img src="${imagen}" class="library-img">
+            <div class="detalle-info">
+                <h1>${titulo}</h1>
+                <p class="detalle-descripcion">${descripcion}</p>
+
+                <div class="stats">
+                    <p><strong>Horas jugadas:</strong> ${horas} hrs</p>
+                    <p><strong>Valoración:</strong> ⭐ ${rating} / 5</p>
+                </div>
+
+                <div class="barra-aprobacion">
+                    <div class="barra-fill" style="width:${porcentaje}%"></div>
+                </div>
+
+                <button class="btn-jugar">JUGAR</button>
+            </div>
+        </div>
     `;
+
+    document.getElementById("detalleContenido").classList.remove("fade-in");
+    void document.getElementById("detalleContenido").offsetWidth;
+    document.getElementById("detalleContenido").classList.add("fade-in");
 }
 </script>
 
