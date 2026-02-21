@@ -17,6 +17,7 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // 🔥 SOLO PARA REGISTRO
     public Usuario guardarUsuario(Usuario usuario) {
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
@@ -24,10 +25,12 @@ public class UsuarioService {
 
         return usuarioRepository.save(usuario);
     }
+    public Usuario guardar(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
 
     public Usuario buscarPorEmail(String email) {
         return usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
-
 }

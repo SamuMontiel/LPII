@@ -7,6 +7,7 @@ import java.util.*;
 @Entity
 @Table(name = "juegos")
 @Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class Juego {
