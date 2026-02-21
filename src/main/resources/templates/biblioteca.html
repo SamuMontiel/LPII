@@ -1,26 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mi Biblioteca</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Biblioteca - VirtualHub</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
 
-<div class="navbar">
-    <a th:href="@{/home}">Inicio</a>
-    <a th:href="@{/biblioteca}">Biblioteca</a>
-    <a th:href="@{/logout}">Cerrar sesión</a>
-</div>
+<div class="library-container">
 
-<h2>Mi Biblioteca</h2>
+    <!-- LEFT SIDE -->
+    <div class="library-sidebar">
+        <h2>Biblioteca</h2>
 
-<div class="game-grid">
-    <div class="game-card" th:each="juego : ${juegos}">
-        <img th:src="@{${juego.imagenUrl}}" alt="Juego">
-        <h3 th:text="${juego.titulo}"></h3>
-        <p th:text="${juego.descripcion}"></p>
+        <div th:each="juego : ${juegos}"
+             class="library-item"
+             onclick="mostrarJuego(this)"
+             th:data-titulo="${juego.titulo}"
+             th:data-descripcion="${juego.descripcion}"
+             th:data-precio="${juego.precio}"
+             th:data-imagen="${juego.imagenUrl}">
+             
+            <span th:text="${juego.titulo}"></span>
+        </div>
+
     </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="library-detail">
+
+        <div id="detalleContenido">
+
+            <h1>Selecciona un juego</h1>
+            <p>Haz click en un juego de tu biblioteca</p>
+
+        </div>
+
+    </div>
+
 </div>
+
+<script>
+function mostrarJuego(elemento) {
+
+    const titulo = elemento.getAttribute("data-titulo");
+    const descripcion = elemento.getAttribute("data-descripcion");
+    const precio = elemento.getAttribute("data-precio");
+    const imagen = elemento.getAttribute("data-imagen");
+
+    document.getElementById("detalleContenido").innerHTML = `
+        <img src="${imagen}" class="library-img">
+        <h1>${titulo}</h1>
+        <p>${descripcion}</p>
+        <p class="precio">$${precio}</p>
+        <button class="btn-jugar">JUGAR</button>
+    `;
+}
+</script>
 
 </body>
 </html>

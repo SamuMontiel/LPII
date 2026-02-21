@@ -476,3 +476,52 @@ body {
 .user-panel h2 {
     font-size: 22px;
 }
+.library-container {
+    display: flex;
+    height: 100vh;
+    background-color: #1b2838;
+}
+
+.library-sidebar {
+    width: 250px;
+    background-color: #171a21;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.library-item {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.library-item:hover {
+    background-color: #2a475e;
+}
+
+.library-detail {
+    flex: 1;
+    padding: 40px;
+    background-color: #0f141b;
+}
+
+.library-img {
+    width: 600px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.btn-jugar {
+    background-color: #1db954;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+}
+
+.btn-jugar:hover {
+    transform: scale(1.05);
+}
