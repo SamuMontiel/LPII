@@ -1,31 +1,46 @@
 package com.virtualhub.controller;
 
 import com.virtualhub.model.Usuario;
+import com.virtualhub.model.Juego;
 import com.virtualhub.service.UsuarioService;
+import com.virtualhub.service.JuegoService;
+import com.virtualhub.service.UsuarioJuegoService;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequiredArgsConstructor
 public class BibliotecaController {
 
     private final UsuarioService usuarioService;
-
-    public BibliotecaController(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
-    }
+    private final JuegoService juegoService;
+    private final UsuarioJuegoService usuarioJuegoService;
 
     @GetMapping("/biblioteca")
-    public String verBiblioteca(Authentication authentication, Model model) {
+    public String biblioteca(Model model,
+                             Authentication authentication) {
 
-        String email = authentication.getName();
-        Usuario usuario = usuarioService.buscarPorEmail(email);
+        Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
 
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("juegos", usuario.getBiblioteca());
+        model.addAttribute("biblioteca",
+                usuarioJuegoService.obtenerBiblioteca(usuario));
 
         return "biblioteca";
     }
 
+    @PostMapping("/cerrar-juego/{id}")
+    @ResponseBody
+    public void cerrarJuego(@PathVariable Long id,
+                            @RequestParam double minutos,
+                            Authentication authentication) {
+
+        Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
+        Juego juego = juegoService.buscarPorId(id);
+
+        usuarioJuegoService.registrarSesion(usuario, juego, minutos);
+    }
 }

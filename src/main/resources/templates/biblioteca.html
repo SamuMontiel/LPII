@@ -7,19 +7,24 @@
 <body>
 
 <div class="library-container">
+
     <div class="library-sidebar">
         <h2>Biblioteca</h2>
 
-        <div th:each="juego : ${juegos}"
+        <div th:each="uj : ${biblioteca}"
              class="library-item"
              onclick="mostrarJuego(this)"
-             th:data-titulo="${juego.titulo}"
-             th:data-descripcion="${juego.descripcion}"
-             th:data-imagen="${juego.imagenUrl}">
+             th:data-id="${uj.juego.id}"
+             th:data-titulo="${uj.juego.titulo}"
+             th:data-descripcion="${uj.juego.descripcion}"
+             th:data-imagen="${uj.juego.imagenUrl}"
+             th:data-horas="${uj.horasJugadas}"
+             th:data-sesion="${uj.ultimaSesion}">
 
-            <span th:text="${juego.titulo}"></span>
+            <span th:text="${uj.juego.titulo}"></span>
         </div>
     </div>
+
     <div class="library-detail">
         <div id="detalleContenido">
             <h1>Selecciona un juego</h1>
@@ -28,24 +33,36 @@
     </div>
 
 </div>
+<div id="launchModal" class="launch-modal">
+    <div class="launch-box">
+        <h2>Juego ejecutándose...</h2>
+        <p>Tiempo en sesión...</p>
+        <button class="btn-jugar" onclick="cerrarJuego()">Cerrar juego</button>
+    </div>
+</div>
 
 <script>
 
+let startTime;
+let juegoActualId;
+
 function mostrarJuego(elemento) {
+
     document.querySelectorAll(".library-item")
         .forEach(item => item.classList.remove("activo"));
 
     elemento.classList.add("activo");
 
+    const id = elemento.dataset.id;
     const titulo = elemento.dataset.titulo;
     const descripcion = elemento.dataset.descripcion;
     const imagen = elemento.dataset.imagen;
-    const rating = (Math.random() * 5).toFixed(1);
-    const horas = (Math.random() * 200).toFixed(1);
-    const porcentaje = (rating / 5) * 100;
+    const horas = elemento.dataset.horas;
+    const sesion = elemento.dataset.sesion;
 
     document.querySelector(".library-detail").style.background =
-        `linear-gradient(rgba(15,20,27,0.85), rgba(15,20,27,0.95)), url('${imagen}') center/cover no-repeat`;
+        `linear-gradient(rgba(15,20,27,0.9), rgba(15,20,27,0.95)), 
+         url('${imagen}') center/cover no-repeat`;
 
     document.getElementById("detalleContenido").innerHTML = `
         <div class="detalle-header">
@@ -56,17 +73,12 @@ function mostrarJuego(elemento) {
                 <p class="detalle-descripcion">${descripcion}</p>
 
                 <div class="stats">
-                    <p>☁ Estado en la nube: <span class="ok">Actualizado</span></p>
-                    <p>🕒 Última sesión: Hace 2 días</p>
-                    <p>⏳ Tiempo total jugado: ${horas} hrs</p>
-                    <p>⭐ Valoración: ${rating} / 5</p>
+                    <p>⏳ Horas jugadas: ${parseFloat(horas).toFixed(2)}</p>
+                    <p>🕒 Última sesión: ${sesion ? sesion : "Nunca"}</p>
                 </div>
 
-                <div class="barra-aprobacion">
-                    <div class="barra-fill" style="width:${porcentaje}%"></div>
-                </div>
-
-                <button class="btn-jugar" onclick="launchGame(this)">
+                <button class="btn-jugar"
+                        onclick="launchGame(${id})">
                     JUGAR
                 </button>
             </div>
@@ -74,13 +86,29 @@ function mostrarJuego(elemento) {
     `;
 }
 
-function launchGame(btn){
-    btn.innerText = "Iniciando...";
-    btn.classList.add("launching");
+function launchGame(id){
 
-    setTimeout(() => {
-        btn.innerText = "Jugando...";
-    }, 1500);
+    juegoActualId = id;
+    startTime = new Date();
+
+    const modal = document.getElementById("launchModal");
+    modal.style.display = "flex";
+}
+
+function cerrarJuego(){
+
+    const endTime = new Date();
+    const minutos = (endTime - startTime) / 60000;
+
+    fetch(`/cerrar-juego/${juegoActualId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `minutos=${minutos}`
+    }).then(() => {
+        location.reload();
+    });
 }
 
 </script>

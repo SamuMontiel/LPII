@@ -4,54 +4,53 @@ import com.virtualhub.model.Usuario;
 import com.virtualhub.model.Juego;
 import com.virtualhub.service.UsuarioService;
 import com.virtualhub.service.JuegoService;
-//sdsdsddsds
-import jakarta.transaction.Transactional;
+import com.virtualhub.service.UsuarioJuegoService;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
-//SSDSDSDSDSD
+
     private final UsuarioService usuarioService;
     private final JuegoService juegoService;
-
-    public HomeController(UsuarioService usuarioService, JuegoService juegoService) {
-        this.usuarioService = usuarioService;
-        this.juegoService = juegoService;
-    }
+    private final UsuarioJuegoService usuarioJuegoService;
 
     @GetMapping("/home")
     public String home(Model model, Authentication authentication) {
 
-        String email = authentication.getName();
-        Usuario usuario = usuarioService.buscarPorEmail(email);
+        Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
 
         model.addAttribute("usuario", usuario);
         model.addAttribute("juegos", juegoService.listarTodos());
 
         return "home";
     }
+
     @Transactional
     @PostMapping("/comprar/{id}")
-    public String comprarJuego(@PathVariable Long id, Authentication authentication) {
+    public String comprarJuego(@PathVariable Long id,
+                               Authentication authentication) {
 
-        String email = authentication.getName();
-        Usuario usuario = usuarioService.buscarPorEmail(email);
+        Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
         Juego juego = juegoService.buscarPorId(id);
 
-        if (usuario.getBiblioteca().contains(juego)) {
-            return "redirect:/home";
-        }
-
-
+     
         if (usuario.getSaldo() < juego.getPrecio()) {
             return "redirect:/home";
         }
+
         usuario.setSaldo(usuario.getSaldo() - juego.getPrecio());
-        usuario.getBiblioteca().add(juego);
         usuarioService.guardar(usuario);
+
+   
+        usuarioJuegoService.agregarJuego(usuario, juego);
+
         return "redirect:/home";
     }
 }
