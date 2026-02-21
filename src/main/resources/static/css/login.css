@@ -199,16 +199,12 @@ button[type="submit"]:hover{
   margin-bottom:14px;
   background:linear-gradient(90deg, rgba(0,176,255,0.18), rgba(107,224,255,0.08));
 }
-
-/* Responsive */
 @media (max-width:480px){
   .login-box{ padding:22px; border-radius:12px }
   .login-box h2{ font-size:22px }
 }
 
-/* Accesibilidad: foco visible */
 :focus{ outline: 3px solid rgba(0,176,255,0.12); outline-offset:2px; }
-/* Canvas de partículas de fondo muy discretas */
 #vh-bg-particles-canvas{
   position:fixed;
   inset:0;

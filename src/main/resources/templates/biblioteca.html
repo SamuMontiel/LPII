@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Biblioteca - VirtualHub</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
@@ -18,9 +18,7 @@
              th:data-titulo="${juego.titulo}"
              th:data-descripcion="${juego.descripcion}"
              th:data-precio="${juego.precio}"
-             th:data-imagen="${juego.imagenUrl}"
-             th:data-rating="${#numbers.formatDecimal(T(java.lang.Math).random()*5,1,1)}"
-             th:data-horas="${T(java.lang.Math).random()*200}">
+             th:data-imagen="${juego.imagenUrl}">
 
             <span th:text="${juego.titulo}"></span>
         </div>
@@ -44,9 +42,10 @@ function mostrarJuego(elemento) {
     const descripcion = elemento.dataset.descripcion;
     const precio = elemento.dataset.precio;
     const imagen = elemento.dataset.imagen;
-    const rating = parseFloat(elemento.dataset.rating).toFixed(1);
-    const horas = parseFloat(elemento.dataset.horas).toFixed(1);
 
+    // Generamos valores dinámicos aquí
+    const rating = (Math.random() * 5).toFixed(1);
+    const horas = (Math.random() * 200).toFixed(1);
     const porcentaje = (rating / 5) * 100;
 
     document.getElementById("detalleContenido").innerHTML = `
@@ -69,10 +68,6 @@ function mostrarJuego(elemento) {
             </div>
         </div>
     `;
-
-    document.getElementById("detalleContenido").classList.remove("fade-in");
-    void document.getElementById("detalleContenido").offsetWidth;
-    document.getElementById("detalleContenido").classList.add("fade-in");
 }
 </script>
 
