@@ -29,6 +29,9 @@ public class HomeController {
         model.addAttribute("usuario", usuario);
         model.addAttribute("juegos", juegoService.listarTodos());
 
+        model.addAttribute("biblioteca",
+                usuarioJuegoService.obtenerBiblioteca(usuario));
+
         return "home";
     }
 
