@@ -1,0 +1,3 @@
+# Ignorar configuraciones locales
+.env
+application-local.properties
