@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mi Biblioteca</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="navbar">
+    <a th:href="@{/home}">Inicio</a>
+    <a th:href="@{/biblioteca}">Biblioteca</a>
+    <a th:href="@{/logout}">Cerrar sesión</a>
+</div>
+
+<h2>Mi Biblioteca</h2>
+
+<div class="game-grid">
+    <div class="game-card" th:each="juego : ${juegos}">
+        <img th:src="@{${juego.imagenUrl}}" alt="Juego">
+        <h3 th:text="${juego.titulo}"></h3>
+        <p th:text="${juego.descripcion}"></p>
+    </div>
+</div>
+
+</body>
+</html>

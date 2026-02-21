@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${juego.titulo}">Detalle</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="detalle-container">
+
+    <div class="detalle-header">
+        <img th:src="@{'/img/' + ${juego.imagenUrl}}" class="detalle-img">
+        <div>
+            <h1 th:text="${juego.titulo}"></h1>
+            <p th:text="${juego.descripcion}"></p>
+            <h2>S/ <span th:text="${juego.precio}"></span></h2>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="estadisticas">
+        <h3>
+            <span th:text="${#numbers.formatDecimal(porcentaje,0,0)}"></span>%
+            lo recomienda
+        </h3>
+        <p th:text="${totalResenas} + ' reseñas'"></p>
+
+        <div class="barra-aprobacion">
+            <div class="barra-fill"
+                 th:style="'width:' + ${porcentaje} + '%'">
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario -->
+    <div th:if="${puedeResenar}" class="form-resena">
+        <h3>Deja tu reseña</h3>
+
+        <form th:action="@{'/juego/' + ${juego.id} + '/resenar'}"
+              method="post">
+
+            <label>Puntuación:</label>
+            <select name="puntuacion">
+                <option value="1">1 ⭐</option>
+                <option value="2">2 ⭐</option>
+                <option value="3">3 ⭐</option>
+                <option value="4">4 ⭐</option>
+                <option value="5">5 ⭐</option>
+            </select>
+
+            <label>¿Recomiendas?</label>
+            <select name="recomendado">
+                <option value="true">👍 Sí</option>
+                <option value="false">👎 No</option>
+            </select>
+
+            <textarea name="comentario"
+                      placeholder="Escribe tu opinión..."
+                      required></textarea>
+
+            <button type="submit">Publicar</button>
+        </form>
+    </div>
+
+    <div class="lista-resenas">
+        <h3>Reseñas</h3>
+
+        <div th:each="r : ${resenas}" class="resena-card">
+
+            <h4 th:text="${r.usuario.nombre}"></h4>
+
+            <p>
+                <span th:text="${r.puntuacion}"></span> ⭐ -
+                <span th:text="${r.recomendado} ? 'Recomendado' : 'No recomendado'"></span>
+            </p>
+
+            <p th:text="${r.comentario}"></p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

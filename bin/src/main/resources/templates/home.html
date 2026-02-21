@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>VirtualHub - Inicio</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">VirtualHub</div>
+    <div class="nav-links">
+        <a th:href="@{/biblioteca}">Biblioteca</a>
+        <a th:href="@{/logout}">Cerrar sesión</a>
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="user-panel">
+        <h2 th:text="'Bienvenido, ' + ${usuario.nombre}"></h2>
+
+        <p class="saldo">
+            Saldo disponible: $
+            <span id="saldoValor"
+                  th:text="${usuario.saldo}">
+            </span>
+        </p>
+    </div>
+
+    <div class="games-container">
+
+        <div class="game-card"
+             th:each="juego : ${juegos}">
+
+            <img th:src="@{${juego.imagenUrl}}"
+                 alt="Juego">
+
+            <h3>
+                <a th:href="@{/juego/{id}(id=${juego.id})}"
+                   th:text="${juego.titulo}">
+                </a>
+            </h3>
+
+            <p th:text="${juego.descripcion}"></p>
+
+            <p class="precio"
+               th:text="'$' + ${juego.precio}">
+            </p>
+
+            <div th:if="${usuario.biblioteca.contains(juego)}">
+                <button class="btn-disabled" disabled>
+                    Ya lo tienes
+                </button>
+            </div>
+
+            <div th:if="${!usuario.biblioteca.contains(juego)}">
+                <form th:action="@{/comprar/{id}(id=${juego.id})}"
+                      method="post">
+                    <button class="btn-comprar"
+                            type="submit">
+                        Comprar
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const saldo = document.getElementById("saldoValor");
+
+        if (!saldo) return;
+
+        const finalValue = parseFloat(saldo.innerText);
+        let current = 0;
+        const increment = finalValue / 40;
+
+        const counter = setInterval(() => {
+            current += increment;
+            if (current >= finalValue) {
+                current = finalValue;
+                clearInterval(counter);
+            }
+            saldo.innerText = current.toFixed(2);
+        }, 20);
+    });
+</script>
+
+</body>
+</html>
