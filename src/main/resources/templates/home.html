@@ -62,30 +62,6 @@
 
         </div>
     </div>
-	<section class="special-offers" th:if="${juegos.size() > 0}">
-	    <h2 class="section-title">🔥 Ofertas especiales</h2>
-
-	    <div class="offers-row">
-
-	        <div class="offer-card"
-	             th:each="juego,iter : ${juegos}"
-	             th:if="${iter.index < 3}">
-
-	            <img th:src="@{${juego.coverUrl}}">
-
-	            <div class="offer-badge">-30%</div>
-
-	            <div class="offer-info">
-	                <h3 th:text="${juego.titulo}"></h3>
-	                <span class="offer-price">
-	                    S/ <span th:text="${juego.precio}"></span>
-	                </span>
-	            </div>
-
-	        </div>
-
-	    </div>
-	</section>
 
     <!-- INDICADORES -->
     <div class="hero-indicators">
@@ -93,6 +69,34 @@
               th:classappend="${iter.index == 0} ? ' active' : ''"></span>
     </div>
 
+</section>
+
+
+<!-- ================= OFERTAS ================= -->
+
+<section class="special-offers" th:if="${juegos.size() > 0}">
+    <h2 class="section-title">🔥 Ofertas especiales</h2>
+
+    <div class="offers-row">
+
+        <div class="offer-card"
+             th:each="juego,iter : ${juegos}"
+             th:if="${iter.index < 3}">
+
+            <img th:src="@{${juego.coverUrl}}">
+
+            <div class="offer-badge">-30%</div>
+
+            <div class="offer-info">
+                <h3 th:text="${juego.titulo}"></h3>
+                <span class="offer-price">
+                    S/ <span th:text="${juego.precio}"></span>
+                </span>
+            </div>
+
+        </div>
+
+    </div>
 </section>
 
 
@@ -154,7 +158,6 @@ document.addEventListener("DOMContentLoaded", function() {
     let current = 0;
 
     function showSlide(index) {
-
         slides.forEach(s => s.classList.remove("active"));
         indicators.forEach(i => i.classList.remove("active"));
 
@@ -176,14 +179,15 @@ document.addEventListener("DOMContentLoaded", function() {
         indicator.addEventListener("click", () => showSlide(index));
     });
 
-});
-document.querySelectorAll(".btn-comprar").forEach(btn => {
-    btn.addEventListener("click", function() {
-        btn.innerText = "Procesando...";
-        btn.style.background = "#1f6ed4";
+    // Animación botón comprar
+    document.querySelectorAll(".btn-comprar").forEach(btn => {
+        btn.addEventListener("click", function() {
+            btn.innerText = "Procesando...";
+            btn.style.background = "#1f6ed4";
+        });
     });
-});
 
+});
 </script>
 
 </body>
