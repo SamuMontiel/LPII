@@ -110,4 +110,12 @@ public class UsuarioJuegoService {
 
         usuarioJuegoRepository.save(uj);
     }
+    public boolean existe(Usuario usuario, Juego juego) {
+        return usuarioJuegoRepository
+                .findByUsuarioAndJuego(usuario, juego)
+                .isPresent();
+    }
+    
+    
+    
 }

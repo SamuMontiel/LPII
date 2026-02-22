@@ -6,22 +6,26 @@
 </head>
 <body>
 
-<header class="navbar">
-    <div class="logo">VirtualHub</div>
+	<header class="navbar">
+	    <div class="logo">VirtualHub</div>
 
-    <div class="user-info">
-        <span th:text="${usuario.nombre}"></span>
-        <span class="saldo">
-            S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
-        </span>
+	    <div class="user-info">
+	        <span th:text="${usuario.nombre}"></span>
 
-        <a th:href="@{/biblioteca}" class="btn-nav">Biblioteca</a>
+	        <span class="saldo">
+	            S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
+	        </span>
 
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="btn-logout">Cerrar sesión</button>
-        </form>
-    </div>
-</header>
+	        <a th:href="@{/biblioteca}" class="btn-nav">Biblioteca</a>
+
+	        <!-- NUEVO BOTÓN CARRITO -->
+	        <a th:href="@{/carrito}" class="btn-nav">Carrito</a>
+
+	        <form th:action="@{/logout}" method="post" style="display:inline;">
+	            <button type="submit" class="btn-logout">Cerrar sesión</button>
+	        </form>
+	    </div>
+	</header>
 
 <main class="store-container">
 
@@ -48,20 +52,16 @@
                     </button>
                 </div>
 
-                <div th:unless="${juegosComprados.contains(juego.id)}">
-                    <form th:action="@{/comprar/{id}(id=${juego.id})}" method="post">
-                        <button class="btn-comprar" type="submit">
-                            Comprar
-                        </button>
-                    </form>
-                </div>
-
+				<div th:unless="${juegosComprados.contains(juego.id)}">
+					<form th:action="@{'/carrito/agregar/' + ${juego.id}}" method="post">
+					    <button class="btn-comprar" type="submit">
+					        Agregar al carrito
+					    </button>
+					</form>
+				</div>
             </div>
-
         </div>
-
     </div>
-
 </main>
 
 </body>

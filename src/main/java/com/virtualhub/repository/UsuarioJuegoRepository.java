@@ -10,4 +10,6 @@ public interface UsuarioJuegoRepository
     Optional<UsuarioJuego> findByUsuarioAndJuego(Usuario usuario, Juego juego);
 
     List<UsuarioJuego> findByUsuario(Usuario usuario);
+    
+    
 }

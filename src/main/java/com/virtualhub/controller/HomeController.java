@@ -44,25 +44,4 @@ public class HomeController {
 
         return "home";
     }
-    @Transactional
-    @PostMapping("/comprar/{id}")
-    public String comprarJuego(@PathVariable Long id,
-                               Authentication authentication) {
-
-        Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
-        Juego juego = juegoService.buscarPorId(id);
-
-     
-        if (usuario.getSaldo() < juego.getPrecio()) {
-            return "redirect:/home";
-        }
-
-        usuario.setSaldo(usuario.getSaldo() - juego.getPrecio());
-        usuarioService.guardar(usuario);
-
-   
-        usuarioJuegoService.agregarJuego(usuario, juego);
-
-        return "redirect:/home";
-    }
 }
