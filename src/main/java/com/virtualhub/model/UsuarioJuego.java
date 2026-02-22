@@ -36,4 +36,5 @@ public class UsuarioJuego {
     private LocalDateTime horaInicio;
 
     private LocalDateTime ultimaSesion;
+    
 }

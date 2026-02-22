@@ -1,1237 +1,297 @@
-
-.login-container {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(to right, #141e30, #243b55);
-}
-
-.login-box {
-    background-color: #1b2838;
-    padding: 40px;
-    width: 350px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
-
-.login-box h2 {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.login-box input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: none;
-}
-
-.login-box button {
-    width: 100%;
-}
-
-.login-box a {
-    color: #66c0f4;
-    text-decoration: none;
-    display: block;
-    text-align: center;
-    margin-top: 15px;
-}
-
-.error-message {
-    color: #ff4c4c;
-    text-align: center;
-    margin-bottom: 15px;
-}
+/* ============================= */
+/* RESET SUAVE */
+/* ============================= */
 
 body {
-	background-color: #0f141b;
-	    color: #e5e5e5;
-	    font-family: 'Segoe UI', sans-serif;
-}
-.navbar {
-    background-color: #171a21;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-header {
-    background-color: #171a21;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.logout {
-    color: white;
-    margin-left: 20px;
-    text-decoration: none;
-}
-.saldo {
-    background-color: #2a475e;
-    padding: 8px 15px;
-    border-radius: 5px;
-}
-header h2 {
     margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: radial-gradient(circle at top left, #0f1b2b, #0b111a 60%);
+    color: #e6f1ff;
 }
 
-.container {
-    padding: 30px;
-}
-.error {
-    color: #ff4c4c;
-    margin-bottom: 20px;
-}
-.juegos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-}
-.juego-info {
-    flex: 1;
-}
+/* ============================= */
+/* NAVBAR */
+/* ============================= */
 
-.juego-card {
-    background-color: #2a475e;
-    padding: 15px;
-    border-radius: 8px;
-    transition: 0.2s;
-}
-
-.precio {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.juego-card:hover {
-    transform: scale(1.05);
-    background-color: #3b6a8c;
-}
-
-.juego-card img {
-    width: 100%;
-    border-radius: 8px;
-}
-
-button {
-    background-color: #66c0f4;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover {
-    background-color: #4da6d9;
-}
-.comprado {
-    color: lightgreen;
-    font-weight: bold;
-}
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #171a21;
-    padding: 15px;
+    padding: 15px 40px;
+    background: linear-gradient(90deg, #0e1622, #132436);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 2px 15px rgba(0,0,0,0.4);
 }
 
-.navbar a {
-    color: #66c0f4;
-    text-decoration: none;
-    margin-left: 20px;
-    font-weight: bold;
-}
-
-.navbar a:hover {
-    color: white;
-}
-
-.game-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-.game-card {
-    background-color: #1b2838;
-    padding: 15px;
-    border-radius: 8px;
-    transition: transform 0.2s ease;
-}
-
-.game-card:hover {
-    transform: scale(1.05);
-}
-
-.game-card img {
-    width: 100%;
-    border-radius: 5px;
-}
-.detalle-container {
-    display: flex;
-    gap: 40px;
-    padding: 40px;
-}
-
-.detalle-container img {
-    width: 400px;
-    border-radius: 10px;
-}
-
-.detalle-info {
-    max-width: 600px;
-}
-
-.detalle-info button {
-    background-color: #66c0f4;
-    border: none;
-    padding: 12px 25px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.detalle-info button:disabled {
-    background-color: gray;
-    cursor: not-allowed;
-}
-
-* {
-    transition: all 0.25s ease-in-out;
-}
-
-
-.nav-links a {
-    position: relative;
-}
-
-.nav-links a::after {
-    content: "";
-    position: absolute;
-    width: 0%;
-    height: 2px;
-    bottom: -4px;
-    left: 0;
-    background-color: #1db954;
-    transition: width 0.3s ease;
-}
-
-.nav-links a:hover::after {
-    width: 100%;
-}
-
-.game-card {
-    transform: translateY(0);
-}
-
-.game-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-}
-
-
-.game-card img {
-    transition: transform 0.4s ease;
-}
-
-.game-card:hover img {
-    transform: scale(1.05);
-}
-
-.btn-comprar {
-    background: linear-gradient(135deg, #1db954, #1ed760);
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-}
-
-.btn-comprar:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 12px rgba(30, 215, 96, 0.6);
-}
-
-
-.btn-disabled {
-    background-color: #555;
-    color: #ccc;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-}
-
-body {
-    animation: fadeInBody 0.8s ease-in-out;
-}
-
-@keyframes fadeInBody {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-.btn-comprar:active {
-    transform: scale(0.95);
-}
-
-.purchase-success {
-    animation: popSuccess 0.4s ease;
-}
-
-@keyframes popSuccess {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-body {
-    background: linear-gradient(-45deg, #0f141b, #141e30, #0f141b, #1c2833);
-    background-size: 400% 400%;
-    animation: gradientMove 15s ease infinite;
-}
-
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-.main-container {
-    animation: fadeInContent 0.6s ease-in-out;
-}
-
-@keyframes fadeInContent {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.detalle-container {
-    display: flex;
-    gap: 40px;
-    padding: 40px;
-    align-items: flex-start;
-}
-
-.detalle-imagen img {
-    width: 400px;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-}
-
-.detalle-info {
-    max-width: 600px;
-}
-
-.detalle-info h1 {
-    font-size: 32px;
-    margin-bottom: 20px;
-}
-
-.detalle-descripcion {
-    margin-bottom: 20px;
-    line-height: 1.6;
-    opacity: 0.9;
-}
-
-.detalle-precio {
+.logo {
     font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-.barra-aprobacion {
-    width: 100%;
-    height: 10px;
-    background: #1b2838;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-top: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #4ea3ff;
 }
 
-.barra-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #5cb85c, #00ff99);
-    transition: width 0.5s ease;
-}
-
-.detalle-container {
-    width: 80%;
-    margin: auto;
-}
-
-.detalle-header {
+.user-info {
     display: flex;
-    gap: 30px;
-    margin-bottom: 30px;
+    align-items: center;
+    gap: 18px;
 }
 
-.detalle-img {
-    width: 300px;
-    border-radius: 10px;
+.saldo {
+    background: rgba(78,163,255,0.15);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: #4ea3ff;
 }
 
-.estadisticas {
-    margin: 20px 0;
+.btn-nav {
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    background: #1f2f44;
+    color: #fff;
+    transition: 0.2s ease;
 }
 
-.barra-aprobacion {
-    width: 100%;
-    height: 10px;
-    background: #1b2838;
-    border-radius: 5px;
-    overflow: hidden;
+.btn-nav:hover {
+    background: #2e4666;
 }
 
-.barra-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #5cb85c, #00ff99);
-    transition: width 0.5s ease;
+.btn-logout {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    background: #a83232;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s ease;
 }
 
-.resena-card {
-    background: #1b2838;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 8px;
+.btn-logout:hover {
+    background: #d64545;
 }
 
-.form-resena textarea {
-    width: 100%;
-    height: 80px;
-    margin: 10px 0;
-}
-/* ===============================
-   HOME GRID CLEAN VERSION
-================================ */
+/* ============================= */
+/* CONTENEDOR TIENDA */
+/* ============================= */
 
-.games-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 25px;
+.store-container {
     padding: 40px;
-    max-width: 1200px;
-    margin: auto;
 }
+
+.section-title {
+    font-size: 28px;
+    margin-bottom: 25px;
+    border-left: 4px solid #4ea3ff;
+    padding-left: 12px;
+}
+
+/* ============================= */
+/* GRID JUEGOS */
+/* ============================= */
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+/* ============================= */
+/* TARJETA JUEGO */
+/* ============================= */
 
 .game-card {
-    background-color: #1b2838;
+    background: linear-gradient(180deg, #162231, #111a27);
     border-radius: 12px;
-    padding: 15px;
-    max-width: 260px;
-    margin: auto;
+    overflow: hidden;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    transition: all 0.3s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .game-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.6);
 }
 
-.game-card img {
+/* Imagen */
+.game-image {
     width: 100%;
+    height: 180px;
     object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.game-card:hover .game-image {
+    transform: scale(1.05);
+}
+
+/* Info */
+.game-info {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.game-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+}
+
+.game-info p {
+    font-size: 13px;
+    opacity: 0.75;
+    flex-grow: 1;
+}
+
+/* Precio */
+.price {
+    margin: 12px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #4ea3ff;
+}
+
+/* ============================= */
+/* BOTONES */
+/* ============================= */
+
+.btn-comprar {
+    width: 100%;
+    padding: 10px;
     border-radius: 8px;
-	aspect-ratio: 16 / 9;
-    height: auto;
+    border: none;
+    background: linear-gradient(90deg, #2d8cff, #4ea3ff);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
 }
 
-.game-card h3 {
-    font-size: 16px;
-    margin: 10px 0 5px;
+.btn-comprar:hover {
+    background: linear-gradient(90deg, #1f6ed4, #358ae6);
+    transform: scale(1.03);
 }
 
-.game-card p {
-    font-size: 14px;
-    opacity: 0.85;
-    min-height: 40px;
+.btn-disabled {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #2b3a4f;
+    color: #9bb0c7;
+    cursor: not-allowed;
 }
 
-.precio {
-    font-size: 16px;
-    font-weight: bold;
-    margin: 10px 0;
+/* ============================= */
+/* SCROLLBAR PREMIUM */
+/* ============================= */
+
+::-webkit-scrollbar {
+    width: 10px;
 }
 
-.user-panel {
-    max-width: 1200px;
-    margin: 30px auto 0;
+::-webkit-scrollbar-track {
+    background: #0f1723;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #22354d;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2e4b6b;
+}
+/* =======================================
+   RESET BASE
+======================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    background: #0b141c;
+    font-family: "Segoe UI", sans-serif;
+    color: #c7d5e0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* =======================================
+   NAVBAR
+======================================= */
+
+.steam-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to bottom,#1b2838,#171a21);
+    display: flex;
+    align-items: center;
     padding: 0 40px;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.nav-left {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 25px;
 }
 
-.user-panel h2 {
-    font-size: 22px;
-}
-.library-container {
-    display: flex;
-    height: 100vh;
-    background-color: #1b2838;
-}
-
-.library-sidebar {
-    width: 250px;
-    background-color: #171a21;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.library-item {
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: 0.2s;
-}
-
-.library-item:hover {
-    background-color: #2a475e;
-}
-
-.library-detail {
-    flex: 1;
-    padding: 40px;
-    background-color: #0f141b;
-}
-
-.library-img {
-    width: 600px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.btn-jugar {
-    background-color: #1db954;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-}
-
-.btn-jugar:hover {
-    transform: scale(1.05);
-}
-/* STEAM STYLE LIBRARY */
-
-.library-container {
-    display: flex;
-    height: 100vh;
-    background-color: #1b2838;
-}
-
-.library-sidebar {
-    width: 260px;
-    background-color: #171a21;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.library-item {
-    padding: 12px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: 0.2s;
-    font-weight: 500;
-}
-
-.library-item:hover {
-    background-color: #2a475e;
-    transform: translateX(5px);
-}
-
-.library-detail {
-    flex: 1;
-    padding: 40px;
-    background: linear-gradient(135deg, #0f141b, #1c2833);
-}
-
-.detalle-header {
-    display: flex;
-    gap: 40px;
-}
-
-.library-img {
-    width: 500px;
-    border-radius: 10px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-}
-
-.detalle-info {
-    max-width: 600px;
-}
-
-.detalle-info h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
-}
-
-.detalle-descripcion {
-    margin-bottom: 20px;
-    opacity: 0.9;
-}
-
-.stats {
-    margin-bottom: 15px;
-}
-
-.btn-jugar {
-    margin-top: 20px;
-    background: linear-gradient(135deg, #1db954, #1ed760);
-    border: none;
-    padding: 14px 30px;
-    font-size: 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-    transition: 0.2s;
-}
-
-.btn-jugar:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 20px rgba(30,215,96,0.6);
-}
-
-.barra-aprobacion {
-    width: 100%;
-    height: 12px;
-    background: #1b2838;
-    border-radius: 6px;
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-.barra-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #5cb85c, #00ff99);
-    transition: width 0.5s ease;
-}
-
-.fade-in {
-    animation: fadeContent 0.4s ease;
-}
-
-@keyframes fadeContent {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===========================
-   STEAM LIBRARY MODE BEAST
-=========================== */
-
-.library-container {
-    display: flex;
-    height: 100vh;
-    background-color: #1b2838;
-}
-
-.library-sidebar {
-    width: 260px;
-    background-color: #171a21;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.library-sidebar h2 {
-    margin-bottom: 20px;
-}
-
-.library-item {
-    padding: 12px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: 0.2s;
-    font-weight: 500;
-}
-
-.library-item:hover {
-    background-color: #2a475e;
-    transform: translateX(5px);
-}
-
-.library-item.activo {
-    background-color: #2a475e;
-    border-left: 4px solid #1db954;
-}
-
-.library-detail {
-    flex: 1;
-    padding: 40px;
-    background: linear-gradient(135deg, #0f141b, #1c2833);
-    transition: background 0.6s ease;
-}
-
-.detalle-header {
-    display: flex;
-    gap: 40px;
-}
-
-.library-img {
-    width: 500px;
-    border-radius: 10px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-}
-
-.detalle-info {
-    max-width: 600px;
-}
-
-.detalle-info h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
-}
-
-.detalle-descripcion {
-    margin-bottom: 20px;
-    opacity: 0.9;
-}
-
-.stats {
-    margin-bottom: 15px;
-    line-height: 1.8;
-}
-
-.ok {
-    color: #1db954;
-    font-weight: bold;
-}
-
-.btn-jugar {
-    margin-top: 20px;
-    background: linear-gradient(135deg, #1db954, #1ed760);
-    border: none;
-    padding: 14px 30px;
-    font-size: 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-    transition: 0.2s;
-}
-
-.btn-jugar:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 20px rgba(30,215,96,0.6);
-}
-
-.btn-jugar.launching {
-    animation: pulseLaunch 1s infinite;
-}
-
-@keyframes pulseLaunch {
-    0% { box-shadow: 0 0 0px rgba(30,215,96,0.7); }
-    50% { box-shadow: 0 0 25px rgba(30,215,96,1); }
-    100% { box-shadow: 0 0 0px rgba(30,215,96,0.7); }
-}
-
-.barra-aprobacion {
-    width: 100%;
-    height: 12px;
-    background: #1b2838;
-    border-radius: 6px;
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-.barra-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #5cb85c, #00ff99);
-    transition: width 0.5s ease;
-}
-.launch-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.launch-box {
-    background: #1b2838;
-    padding: 40px;
-    border-radius: 10px;
-    text-align: center;
-}
-/* Fondo Steam */
-.steam-body {
-    background: #1b2838;
-    color: #c7d5e0;
-    font-family: Arial, sans-serif;
-    margin: 0;
-}
-
-/* Layout */
-.library-container {
-    display: flex;
-    height: 100vh;
-}
-
-/* Sidebar */
-.library-sidebar {
-    width: 250px;
-    background: #171a21;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.library-title {
-    color: #66c0f4;
-    margin-bottom: 20px;
-}
-
-.game-item {
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.game-item:hover {
-    background: #2a475e;
-}
-
-/* Main */
-.library-main {
-    flex: 1;
-    padding: 40px;
-}
-
-.game-banner img {
-    width: 100%;
-    max-height: 300px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.game-details {
-    margin-top: 20px;
-}
-
-.hours {
-    margin: 15px 0;
-    font-size: 18px;
-}
-
-/* Play Button */
-.btn-play {
-    background: linear-gradient(to right, #5cdb5c, #2fa32f);
-    border: none;
-    padding: 15px 40px;
-    font-size: 20px;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-play:hover {
-    transform: scale(1.05);
-}
-
-/* Modal */
-.launch-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    justify-content: center;
-    align-items: center;
-}
-
-.launch-content {
-    text-align: center;
-}
-
-.loader {
-    border: 6px solid #ccc;
-    border-top: 6px solid #66c0f4;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin: 20px auto;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-.steam-body {
-    background: #1b2838;
-    color: #c7d5e0;
-    font-family: Arial, sans-serif;
-    margin: 0;
-}
-
-.library-container {
-    display: flex;
-    height: 100vh;
-}
-
-.library-sidebar {
-    width: 260px;
-    background: #171a21;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.library-title {
-    color: #66c0f4;
-    margin-bottom: 20px;
-}
-
-.game-item {
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: 0.3s;
-}
-
-.game-item:hover {
-    background: #2a475e;
-}
-
-.game-item.active {
-    background: #2a475e;
-}
-
-.library-main {
-    flex: 1;
-    padding: 40px;
-    position: relative;
-}
-
-.game-panel {
-    display: none;
-    animation: fade 0.3s ease-in-out;
-}
-
-.game-panel.visible {
-    display: block;
-}
-
-@keyframes fade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.game-banner {
-    height: 300px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 8px;
-}
-
-.game-details {
-    margin-top: 20px;
-}
-
-.hours {
-    margin: 15px 0;
-    font-size: 18px;
-}
-
-.last-session {
-    margin-bottom: 15px;
+.nav-item {
     font-size: 14px;
-    color: #8f98a0;
-}
-
-.btn-play {
-    background: linear-gradient(to right, #5cdb5c, #2fa32f);
-    border: none;
-    padding: 15px 40px;
-    font-size: 20px;
-    color: white;
-    border-radius: 6px;
+    color: #b8b6b4;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
-.btn-play:hover {
-    transform: scale(1.05);
+.nav-item:hover {
+    color: white;
 }
 
-.achievements {
-    margin-top: 25px;
+.nav-item.active {
+    color: #66c0f4;
+    border-bottom: 2px solid #66c0f4;
+    padding-bottom: 4px;
 }
 
-.achievement-item {
-    background: #2a475e;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 4px;
-}
-
-.launch-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    justify-content: center;
-    align-items: center;
-}
-
-.launch-content {
-    text-align: center;
-}
-
-.loader {
-    border: 6px solid #ccc;
-    border-top: 6px solid #66c0f4;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin: 20px auto;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.library-main {
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    transition: background 0.5s ease;
-}
-
-.library-main::before {
-    content:"";
-    position:absolute;
-    inset:0;
-    backdrop-filter: blur(10px);
-    background: rgba(0,0,0,0.6);
-}
-.steam-body {
-    background: #1b2838;
-    color: #c7d5e0;
-    margin: 0;
-    font-family: Arial, sans-serif;
-}
+/* =======================================
+   LAYOUT
+======================================= */
 
 .library-container {
     display: flex;
-    height: 100vh;
+    padding-top: 60px;
+    min-height: 100vh;
 }
 
 .library-sidebar {
-    width: 260px;
-    background: #171a21;
-    padding: 20px;
+    width: 270px;
+    background: linear-gradient(180deg,#171d25,#0f141a);
+    padding: 20px 0;
+    border-right: 1px solid rgba(255,255,255,0.05);
     overflow-y: auto;
-}
-
-.library-title {
-    color: #66c0f4;
-    margin-bottom: 20px;
-}
-
-.game-item {
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: 0.3s;
-}
-
-.game-item:hover {
-    background: #2a475e;
-}
-
-.game-item.active {
-    background: #2a475e;
-}
-
-.playing-dot {
-    float: right;
 }
 
 .library-main {
     flex: 1;
+    position: relative;
+    overflow-y: auto;
     padding: 40px;
-    background-size: cover;
-    position: relative;
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-}
-
-.library-main::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    backdrop-filter: blur(10px);
-    background: rgba(0,0,0,0.6);
-    z-index: 0;
-}
-
-.game-panel {
-    display: none;
-    position: relative;
     z-index: 1;
 }
 
-.game-panel.visible {
-    display: block;
-}
-
-.game-banner {
-    height: 300px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 8px;
-}
-
-.btn-play {
-    background: linear-gradient(to right, #5cdb5c, #2fa32f);
-    border: none;
-    padding: 15px 40px;
-    font-size: 20px;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-play:hover {
-    transform: scale(1.05);
-}
-
-.achievement-item {
-    background: #2a475e;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 4px;
-}
-
-.launch-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    justify-content: center;
-    align-items: center;
-}
-
-.launch-content {
-    text-align: center;
-}
-
-.loader {
-    border: 6px solid #ccc;
-    border-top: 6px solid #66c0f4;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin: 20px auto;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-.progress-bar {
-    width: 300px;
-    height: 12px;
-    background: #2a475e;
-    border-radius: 6px;
-    margin-top: 10px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(to right, #66c0f4, #2fa32f);
-    transition: width 0.5s ease;
-}
-.btn-play.stop {
-    background: #c0392b;
-}
-.game-banner {
-    position: relative;
-    height: 320px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.banner-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9));
-}
-
-.game-logo {
-    position: absolute;
-    bottom: 20px;
-    left: 30px;
-    height: 80px;
-}
-.screenshots {
-    margin-top: 20px;
-}
-
-.screenshot-row {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-}
-
-.screenshot-thumb {
-    height: 120px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.screenshot-thumb:hover {
-    transform: scale(1.05);
-}
-.game-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.game-logo {
-    height: 40px;
-    object-fit: contain;
-}
-
-body.steam-body {
-    margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: #0e141b;
-    color: #c7d5e0;
-}
-.library-container {
-    display: flex;
-    height: 100vh;
-}
-.library-sidebar {
-    width: 260px;
-    background: #171d25;
-    padding: 20px 0;
-    border-right: 1px solid #1f2a36;
-    overflow-y: auto;
-}
+/* =======================================
+   SIDEBAR
+======================================= */
 
 .library-title {
     padding: 0 20px 15px 20px;
@@ -1242,58 +302,116 @@ body.steam-body {
 }
 
 .game-item {
-    padding: 10px 20px;
-    cursor: pointer;
+    padding: 10px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
-    transition: background 0.2s ease;
+    cursor: pointer;
+    transition: 0.2s;
+    border-left: 3px solid transparent;
 }
 
 .game-item:hover {
-    background: #1f2a36;
+    background: rgba(102,192,244,0.08);
 }
 
 .game-item.active {
-    background: #2a475e;
+    background: rgba(102,192,244,0.15);
+    border-left: 3px solid #66c0f4;
+}
+
+.sidebar-game-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.sidebar-title {
+    font-size: 13px;
 }
 
 .playing-dot {
-    font-size: 12px;
+    font-size: 10px;
+    color: #6fff6f;
 }
-.library-main {
-    flex: 1;
-    position: relative;
-    background: #0e141b;
+
+/* =======================================
+   DYNAMIC BACKGROUND
+======================================= */
+
+.dynamic-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;          
     background-size: cover;
     background-position: center;
-    overflow-y: auto;
-    transition: background 0.4s ease;
+    filter: blur(100px);
+    opacity: 0.25;
+    pointer-events: none;    
 }
+
+/* =======================================
+   GAME PANEL
+======================================= */
+
 .game-panel {
     display: none;
-    padding-bottom: 50px;
 }
 
 .game-panel.visible {
     display: block;
 }
+
+/* =======================================
+   BANNER
+======================================= */
+
 .game-banner {
-    height: 460px;
+    height: 320px;
+    border-radius: 16px;
     background-size: cover;
     background-position: center;
     position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.game-banner:hover {
+    transform: scale(1.01);
 }
 
 .banner-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.3), #0e141b);
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.1),
+        rgba(0,0,0,0.6)
+    );
+	pointer-events: none;
 }
+
+/* =======================================
+   DETAILS CARD
+======================================= */
+
 .game-details {
-    padding: 30px 40px;
+    margin-top: -60px;
+    padding: 30px;
+    border-radius: 18px;
+    background: rgba(15,25,35,0.85);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 5;
 }
+
 .game-title-section {
     display: flex;
     align-items: center;
@@ -1307,59 +425,118 @@ body.steam-body {
 }
 
 .game-title-section h2 {
-    margin: 0;
     font-size: 28px;
-    font-weight: 600;
     color: white;
 }
+
 .game-details p {
     color: #8f98a0;
     margin-bottom: 15px;
 }
 
 .hours,
-.last-session,
 .live-status {
-    margin: 8px 0;
     font-size: 14px;
+    margin: 8px 0;
 }
 
 .live-status {
     color: #66c0f4;
-    font-weight: 500;
 }
+
+/* =======================================
+   BUTTONS
+======================================= */
+
+.btn-install,
 .btn-play {
     margin-top: 15px;
     padding: 10px 25px;
     font-size: 14px;
+    border-radius: 4px;
     border: none;
-    border-radius: 3px;
     cursor: pointer;
-    background: linear-gradient(to right, #5c7e10, #6fa720);
+    transition: 0.2s;
     color: white;
-    transition: all 0.2s ease;
 }
 
+.btn-install {
+    background: linear-gradient(90deg,#1a9fff,#0066ff);
+}
+
+.btn-play {
+    background: linear-gradient(90deg,#5c7e10,#6fa720);
+}
+
+.btn-play.stop,
+.btn-install.stop {
+    background: linear-gradient(90deg,#a21f1f,#c9372c);
+}
+
+.btn-install:hover,
 .btn-play:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 0 10px rgba(111,167,32,0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(102,192,244,0.5);
 }
 
-.btn-play.stop {
-    background: linear-gradient(to right, #a21f1f, #c9372c);
-}
+/* =======================================
+   ACHIEVEMENTS
+======================================= */
 
-.btn-play.stop:hover {
-    box-shadow: 0 0 10px rgba(201,55,44,0.6);
-}
-
-.screenshots {
+.achievements-section {
     margin-top: 30px;
 }
 
-.screenshots h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
+.achievement-progress {
+    width: 100%;
+    height: 8px;
+    background: #1b2838;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.achievement-fill {
+    height: 100%;
+    background: linear-gradient(90deg,#66c0f4,#1a9fff);
+}
+
+.achievement-text {
+    font-size: 13px;
+    margin-top: 8px;
+    color: #8f98a0;
+}
+
+/* =======================================
+   TRAILER
+======================================= */
+
+.trailer-section {
+    margin-top: 40px;
+}
+
+.trailer-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+.trailer-container iframe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* =======================================
+   SCREENSHOTS
+======================================= */
+
+.screenshots {
+    margin-top: 40px;
 }
 
 .screenshot-row {
@@ -1372,249 +549,20 @@ body.steam-body {
     width: 180px;
     height: 100px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: 0.2s;
 }
 
 .screenshot-thumb:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(102,192,244,0.6);
 }
-.library-sidebar {
-    width: 280px;
-    background: linear-gradient(180deg, #171d25 0%, #0f141a 100%);
-    padding: 20px 0;
-    border-right: 1px solid #1f2a36;
-    overflow-y: auto;
-}
 
-.library-sidebar::-webkit-scrollbar {
-    width: 6px;
-}
-.library-sidebar::-webkit-scrollbar-thumb {
-    background: #2a475e;
-    border-radius: 3px;
-}
+/* =======================================
+   MODAL
+======================================= */
 
-.game-item {
-    padding: 8px 18px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.18s ease;
-    border-left: 3px solid transparent;
-}
-
-.game-item:hover {
-    background: rgba(42, 71, 94, 0.5);
-}
-
-.game-item.active {
-    background: #2a475e;
-    border-left: 3px solid #66c0f4;
-}
-
-.sidebar-game-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.sidebar-logo {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    border-radius: 4px;
-}
-
-.sidebar-title {
-    font-size: 13px;
-    color: #c7d5e0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.playing-dot {
-    color: #6fff6f;
-    font-size: 10px;
-    text-shadow: 0 0 6px #6fff6f;
-}
-
-.steam-navbar {
-    height: 60px;
-    background: #171a21;
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
-    border-bottom: 1px solid #1f2a36;
-    position: sticky;
-    top: 0;
-    z-index: 999;
-}
-
-.nav-left {
-    display: flex;
-    gap: 25px;
-}
-
-.nav-item {
-    color: #b8b6b4;
-    font-size: 14px;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.nav-item:hover {
-    color: white;
-}
-
-.nav-item.active {
-    color: #66c0f4;
-    border-bottom: 2px solid #66c0f4;
-    padding-bottom: 4px;
-}
-.game-banner {
-    height: 350px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-}
-
-.banner-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom,
-            rgba(0,0,0,0.3),
-            rgba(0,0,0,0.7),
-            #0e141b);
-}
-
-.banner-content {
-    position: absolute;
-    bottom: 20px;
-    left: 40px;
-    right: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.btn-install {
-    background: linear-gradient(90deg, #1a9fff, #0066ff);
-    border: none;
-    padding: 10px 30px;
-    color: white;
-    font-weight: bold;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.btn-install:hover {
-    box-shadow: 0 0 15px rgba(26,159,255,0.6);
-}
-
-.btn-install.stop {
-    background: linear-gradient(90deg, #a21f1f, #c9372c);
-}
-
-.banner-stats {
-    display: flex;
-    gap: 50px;
-    color: #c7d5e0;
-    font-size: 13px;
-}
-
-.stat-title {
-    display: block;
-    font-size: 11px;
-    color: #8f98a0;
-}
-.game-layout {
-    display: flex;
-    gap: 40px;
-    padding: 30px 40px;
-}
-
-.game-left {
-    flex: 3;
-}
-
-.game-right {
-    flex: 1.2;
-}
-
-.side-card {
-    background: #171d25;
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    border: 1px solid #1f2a36;
-}
-
-.achievement-bar {
-    height: 6px;
-    background: #2a475e;
-    border-radius: 3px;
-    margin-top: 8px;
-}
-
-.achievement-progress {
-    height: 100%;
-    width: 60%;
-    background: #66c0f4;
-    border-radius: 3px;
-}
-
-.dynamic-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    filter: blur(60px) brightness(0.4);
-    transform: scale(1.2);
-    z-index: 0;
-    transition: background-image 0.4s ease;
-}
-
-.library-main {
-    position: relative;
-    overflow: hidden;
-}
-
-.game-panel {
-    position: relative;
-    z-index: 2;
-}
-.achievements-section {
-    margin-top: 30px;
-}
-
-.achievements-grid {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.achievement {
-    width: 60px;
-    height: 60px;
-    border-radius: 6px;
-    background: #2a475e;
-    transition: 0.2s;
-}
-
-.achievement.unlocked {
-    background: linear-gradient(135deg,#66c0f4,#1a9fff);
-    box-shadow: 0 0 12px rgba(102,192,244,0.6);
-}
-
-.achievement.locked {
-    background: #1b2838;
-    opacity: 0.4;
-}
 .image-modal {
     display: none;
     position: fixed;
@@ -1630,38 +578,224 @@ body.steam-body {
     max-height: 80%;
     border-radius: 8px;
 }
-.download-bar {
+
+/* =======================================
+   LAUNCH OVERLAY
+======================================= */
+
+.launch-overlay {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #171a21;
-    padding: 10px 40px;
+    inset: 0;
+    background: radial-gradient(circle,#0b1a26,#000);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+.launch-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(102,192,244,0.2);
+    border-top: 4px solid #66c0f4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+/* ===== BANNER CONTENT LAYOUT ===== */
+
+.banner-content {
+    position: absolute;
+    bottom: 25px;
+    left: 40px;
+    right: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 5;
+}
+
+.banner-left {
     display: flex;
     align-items: center;
-    gap: 20px;
-    border-top: 1px solid #1f2a36;
 }
 
-.progress {
-    flex: 1;
-    height: 6px;
-    background: #2a475e;
-    border-radius: 3px;
+.banner-stats {
+    display: flex;
+    gap: 50px;
+    font-size: 13px;
+    color: #c7d5e0;
+    text-align: right;
 }
 
-.progress-fill {
-    width: 60%;
+.banner-stats div {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-title {
+    font-size: 11px;
+    color: #8f98a0;
+}
+/* ============================= */
+/* STEAM SIDEBAR PRO MODE */
+/* ============================= */
+
+.library-sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #0f1b24 0%, #0b141c 100%);
+    padding: 15px;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    overflow-y: auto;
+}
+
+.library-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.library-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+}
+
+/* Header */
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.library-filter {
+    background: #1b2838;
+    border: none;
+    color: #c7d5e0;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+.sidebar-icons span {
+    margin-left: 10px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+/* Search */
+
+.sidebar-search input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    background: #1b2838;
+    color: #c7d5e0;
+    margin-bottom: 15px;
+}
+
+/* Game List */
+
+.game-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.game-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.game-item:hover {
+    background: linear-gradient(90deg, rgba(102,192,244,0.15), transparent);
+    transform: translateX(4px);
+}
+
+.game-item.active {
+    background: linear-gradient(90deg, rgba(102,192,244,0.25), transparent);
+    border-left: 3px solid #66c0f4;
+}
+
+.sidebar-logo {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+
+.sidebar-title {
+    font-size: 13px;
+    color: #c7d5e0;
+}
+
+.playing-dot {
+    color: #6fff6f;
+    font-size: 10px;
+    text-shadow: 0 0 6px #6fff6f;
+    animation: pulseGreen 1.5s infinite;
+}
+
+@keyframes pulseGreen {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+.year-group {
+    margin: 12px 0 6px 4px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #66c0f4;
+    opacity: 0.7;
+}
+
+.sidebar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.favorite-star {
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.favorite-star.active {
+    color: gold;
+    text-shadow: 0 0 6px gold;
+}
+.install-progress {
+    width: 220px;
+    height: 8px;
+    background: #1b2838;
+    border-radius: 4px;
+    margin-top: 10px;
+    position: relative;
+}
+
+.progress-bar {
     height: 100%;
-    background: #66c0f4;
-    border-radius: 3px;
-}
-.game-panel {
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    width: 0%;
+    background: linear-gradient(90deg, #1db954, #1ed760);
+    border-radius: 4px;
+    transition: width 0.3s ease;
 }
 
-.game-panel.visible {
+.progress-text {
+    font-size: 12px;
+    margin-top: 5px;
     display: block;
-    opacity: 1;
+}
+
+.hidden {
+    display: none;
 }

@@ -21,32 +21,55 @@
 <div class="library-container">
 
     <!-- SIDEBAR -->
-    <div class="library-sidebar">
-        <h3 class="library-title">BIBLIOTECA</h3>
+	<div class="library-sidebar">
 
-        <div class="game-item"
-             th:each="uj,iter : ${biblioteca}"
-             th:classappend="${iter.index == 0} ? ' active'"
-             th:onclick="'mostrarJuego(' + ${uj.juego.id} + ', this)'">
+	    <div class="sidebar-header">
+	        <select class="library-filter">
+	            <option>Juegos</option>
+	            <option>Instalados</option>
+	            <option>Favoritos</option>
+	        </select>
 
-            <div class="sidebar-game-content">
-                <img th:if="${uj.juego.logoUrl != null}"
-                     th:src="@{${uj.juego.logoUrl}}"
-                     class="sidebar-logo"
-                     alt="logo">
+	        <div class="sidebar-icons">
+	            <span>⏰</span>
+	            <span>⚙</span>
+	        </div>
+	    </div>
 
-                <span class="sidebar-title"
-                      th:text="${uj.juego.titulo}"></span>
-            </div>
+	    <div class="sidebar-search">
+	        <input type="text" placeholder="Buscar en biblioteca...">
+	    </div>
 
-            <span th:if="${uj.jugando}" class="playing-dot">●</span>
-        </div>
-    </div>
+	    <div class="game-list">
+	        <div th:each="uj,iter : ${biblioteca}">
+
+	            <div class="game-item"
+	                 th:classappend="${iter.index == 0} ? ' active' : ''"
+	                 th:onclick="'mostrarJuego(' + ${uj.juego.id} + ', this)'">
+
+	                <div class="sidebar-game-content">
+	                    <img th:if="${uj.juego.logoUrl != null}"
+	                         th:src="@{${uj.juego.logoUrl}}"
+	                         class="sidebar-logo">
+
+	                    <span class="sidebar-title"
+	                          th:text="${uj.juego.titulo}"></span>
+	                </div>
+
+	                <div class="sidebar-right">
+	                    <span class="favorite-star">☆</span>
+	                    <span th:if="${uj.jugando}" class="playing-dot">●</span>
+	                </div>
+
+	            </div>
+
+	        </div>
+	    </div>
+
+	</div>
 
     <!-- MAIN -->
     <div class="library-main">
-
-        <!-- FONDO DINÁMICO -->
         <div class="dynamic-bg"></div>
 
         <div th:each="uj,iter : ${biblioteca}"
@@ -55,6 +78,7 @@
 
             <!-- BANNER -->
             <div class="game-banner"
+                 th:if="${uj.juego.bannerUrl != null}"
                  th:style="'background-image:url(' + ${uj.juego.bannerUrl} + ')'">
 
                 <div class="banner-overlay"></div>
@@ -62,15 +86,40 @@
                 <div class="banner-content">
 
                     <div class="banner-left">
-                        <button class="btn-install"
-                                th:if="${!uj.jugando}">
-                            INSTALAR
-                        </button>
 
+                        <!-- DETENER -->
                         <button class="btn-install stop"
-                                th:if="${uj.jugando}">
+                                th:if="${uj.jugando}"
+                                th:attr="data-id=${uj.juego.id}"
+                                onclick="detenerJuego(this)">
                             DETENER
                         </button>
+
+                        <!-- INSTALAR / JUGAR -->
+                        <div th:if="${!uj.jugando}">
+
+                            <div class="install-container">
+
+                                <button class="btn-install install-btn"
+                                        onclick="simularInstalacion(this)">
+                                    INSTALAR
+                                </button>
+
+                                <div class="install-progress hidden">
+                                    <div class="progress-bar"></div>
+                                    <span class="progress-text">0%</span>
+                                </div>
+
+                            </div>
+
+                            <button class="btn-install play-btn hidden"
+                                    th:attr="data-id=${uj.juego.id}"
+                                    onclick="iniciarJuego(this)">
+                                JUGAR
+                            </button>
+
+                        </div>
+
                     </div>
 
                     <div class="banner-stats">
@@ -88,32 +137,21 @@
                 </div>
             </div>
 
+            <br><br><br><br><br><br>
+
             <!-- DETALLES -->
             <div class="game-details">
 
-                <!-- TITULO + LOGO -->
                 <div class="game-title-section">
                     <img th:if="${uj.juego.logoUrl != null}"
                          th:src="@{${uj.juego.logoUrl}}"
-                         class="game-logo-left"
-                         alt="Logo">
-
+                         class="game-logo-left">
                     <h2 th:text="${uj.juego.titulo}"></h2>
                 </div>
 
                 <p th:text="${uj.juego.descripcion}"></p>
 
-                <div class="hours">
-                    ⏱ Horas jugadas:
-                    <span th:text="${#numbers.formatDecimal(uj.horasJugadas,1,2)}"></span>
-                </div>
-
-                <div class="last-session"
-                     th:if="${uj.ultimaSesion != null}">
-                    Última vez jugado:
-                    <span th:text="${#temporals.format(uj.ultimaSesion,'dd/MM/yyyy HH:mm')}"></span>
-                </div>
-
+                <!-- TIMER -->
                 <div class="live-status"
                      th:if="${uj.jugando}">
                     🟢 Jugando ahora
@@ -123,39 +161,29 @@
                     </span>
                 </div>
 
-                <button class="btn-play"
-                        th:attr="data-id=${uj.juego.id}"
-                        th:if="${!uj.jugando}"
-                        onclick="iniciarJuego(this)">
-                    ▶ JUGAR
-                </button>
-
-                <button class="btn-play stop"
-                        th:attr="data-id=${uj.juego.id}"
-                        th:if="${uj.jugando}"
-                        onclick="detenerJuego(this)">
-                    ■ DETENER
-                </button>
-
-                <!-- LOGROS -->
-                <div class="achievements-section">
-                    <h3>Logros</h3>
-                    <div class="achievements-grid">
-                        <div class="achievement unlocked"></div>
-                        <div class="achievement unlocked"></div>
-                        <div class="achievement locked"></div>
-                        <div class="achievement locked"></div>
+                <!-- TRAILER -->
+                <div class="trailer-section"
+                     th:if="${uj.juego.trailerUrl != null and uj.juego.trailerUrl != ''}">
+                    <h3>Trailer</h3>
+                    <div class="trailer-container">
+                        <iframe class="game-trailer"
+                                th:data-src="${uj.juego.trailerUrl}"
+                                allow="autoplay; encrypted-media"
+                                allowfullscreen>
+                        </iframe>
                     </div>
                 </div>
 
                 <!-- SCREENSHOTS -->
-                <div class="screenshots">
+                <div class="screenshots"
+                     th:if="${uj.juego.screenshotBaseName != null}">
                     <h3>Capturas</h3>
                     <div class="screenshot-row">
                         <img th:each="i : ${#numbers.sequence(1,5)}"
                              th:src="@{'/images/screenshots/' 
                              + ${uj.juego.screenshotBaseName} 
                              + '-' + ${i} + '.jpg'}"
+                             onerror="this.style.display='none'"
                              class="screenshot-thumb">
                     </div>
                 </div>
@@ -165,22 +193,23 @@
     </div>
 </div>
 
-<!-- MODAL SCREENSHOT -->
-<div class="image-modal" id="imageModal">
-    <img id="modalImg">
-</div>
-
-<!-- BARRA DESCARGA -->
-<div class="download-bar">
-    <span>Descargando actualización...</span>
-    <div class="progress">
-        <div class="progress-fill"></div>
+<!-- OVERLAY -->
+<div class="launch-overlay" id="launchOverlay">
+    <div class="launch-box">
+        <h2>Lanzando juego...</h2>
+        <div class="launch-spinner"></div>
     </div>
 </div>
 
 <script>
 
+// ============================
+// CAMBIAR JUEGO
+// ============================
+
 function mostrarJuego(id, element) {
+
+    detenerTodosLosTrailers();
 
     document.querySelectorAll(".game-panel")
         .forEach(p => p.classList.remove("visible"));
@@ -192,25 +221,62 @@ function mostrarJuego(id, element) {
     panel.classList.add("visible");
     element.classList.add("active");
 
-    const banner =
-        panel.querySelector(".game-banner")
-        .style.backgroundImage;
+    const banner = panel.querySelector(".game-banner");
 
-    document.querySelector(".dynamic-bg")
-        .style.backgroundImage = banner;
+    if (banner) {
+        document.querySelector(".dynamic-bg")
+            .style.backgroundImage = banner.style.backgroundImage;
+    }
+
+    activarTrailer(panel);
 }
+
+// ============================
+// TRAILER
+// ============================
+
+function activarTrailer(panel) {
+
+    const iframe = panel.querySelector(".game-trailer");
+    if (!iframe) return;
+
+    const url = iframe.dataset.src;
+    if (!url) return;
+
+    iframe.src = url + "?autoplay=1&mute=1";
+}
+
+function detenerTodosLosTrailers() {
+    document.querySelectorAll(".game-trailer")
+        .forEach(i => i.src = "");
+}
+
+// ============================
+// JUGAR
+// ============================
 
 function iniciarJuego(button) {
-    const id = button.dataset.id;
-    const csrf = document.querySelector('meta[name="_csrf"]').content;
 
-    fetch("/jugar/" + id, {
-        method: "POST",
-        headers: { "X-CSRF-TOKEN": csrf }
-    }).then(() => location.reload());
+    const overlay = document.getElementById("launchOverlay");
+    overlay.style.display = "flex";
+
+    setTimeout(() => {
+        const id = button.dataset.id;
+        const csrf = document.querySelector('meta[name="_csrf"]').content;
+
+        fetch("/jugar/" + id, {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": csrf }
+        }).then(() => location.reload());
+    }, 1000);
 }
 
+// ============================
+// DETENER
+// ============================
+
 function detenerJuego(button) {
+
     const id = button.dataset.id;
     const csrf = document.querySelector('meta[name="_csrf"]').content;
 
@@ -220,17 +286,64 @@ function detenerJuego(button) {
     }).then(() => location.reload());
 }
 
+// ============================
+// INSTALAR
+// ============================
+
+function simularInstalacion(button) {
+
+    const container = button.closest(".install-container");
+    const progressBox = container.querySelector(".install-progress");
+    const progressBar = progressBox.querySelector(".progress-bar");
+    const progressText = progressBox.querySelector(".progress-text");
+    const playBtn = container.parentElement.querySelector(".play-btn");
+
+    button.classList.add("hidden");
+    progressBox.classList.remove("hidden");
+
+    let progreso = 0;
+
+    const intervalo = setInterval(() => {
+
+        progreso += 10;
+
+        if (progreso >= 100) {
+            clearInterval(intervalo);
+            progressText.innerText = "Instalado ✔";
+
+            setTimeout(() => {
+                progressBox.classList.add("hidden");
+                playBtn.classList.remove("hidden");
+            }, 800);
+        }
+
+        progressBar.style.width = progreso + "%";
+        progressText.innerText = progreso + "%";
+
+    }, 300);
+}
+
+// ============================
+// INIT + TIMER
+// ============================
+
 document.addEventListener("DOMContentLoaded", function() {
 
-    // Activar fondo dinámico inicial
-    const firstBanner = document.querySelector(".game-panel.visible .game-banner");
-    if (firstBanner) {
-        document.querySelector(".dynamic-bg")
-            .style.backgroundImage = firstBanner.style.backgroundImage;
+    const firstPanel = document.querySelector(".game-panel.visible");
+
+    if (firstPanel) {
+        const banner = firstPanel.querySelector(".game-banner");
+        if (banner) {
+            document.querySelector(".dynamic-bg")
+                .style.backgroundImage = banner.style.backgroundImage;
+        }
+
+        activarTrailer(firstPanel);
     }
 
-    // Timer en vivo
     document.querySelectorAll(".timer").forEach(timer => {
+
+        if (!timer.dataset.inicio) return;
 
         const inicio = new Date(timer.dataset.inicio);
 
@@ -249,18 +362,32 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 1000);
     });
 
-    // Modal screenshots
-    document.querySelectorAll(".screenshot-thumb").forEach(img => {
-        img.addEventListener("click", function() {
-            document.getElementById("modalImg").src = this.src;
-            document.getElementById("imageModal").style.display = "flex";
-        });
-    });
+});
+// FAVORITOS
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("favorite-star")) {
+        e.stopPropagation();
+        e.target.classList.toggle("active");
+        e.target.textContent =
+            e.target.classList.contains("active") ? "★" : "☆";
+    }
+});
 
-    document.getElementById("imageModal")
-        .addEventListener("click", function() {
-            this.style.display = "none";
-        });
+// BUSCADOR
+document.querySelector(".sidebar-search input")
+.addEventListener("input", function() {
+
+    const value = this.value.toLowerCase();
+
+    document.querySelectorAll(".game-item").forEach(item => {
+
+        const title = item.querySelector(".sidebar-title")
+                          .textContent
+                          .toLowerCase();
+
+        item.style.display =
+            title.includes(value) ? "flex" : "none";
+    });
 
 });
 </script>

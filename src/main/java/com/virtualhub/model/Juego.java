@@ -22,7 +22,7 @@ public class Juego {
 
     private Double precio;
 
-    // NUEVOS CAMPOS
+    private String trailerUrl;
     private String bannerUrl;
     private String coverUrl;
     private String logoUrl;
