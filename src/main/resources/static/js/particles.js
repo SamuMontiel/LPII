@@ -93,11 +93,11 @@
       p.x += p.vx;
       p.y += p.vy;
 
-      // ligero movimiento oscilatorio
+     
       p.vx += Math.sin((p.x + performance.now() * 0.0002) * 0.002) * 0.0008;
       p.vy += Math.cos((p.y + performance.now() * 0.0003) * 0.002) * 0.0008;
 
-      // rebote suave en bordes
+   
       if (p.x < -20) p.x = w + 20;
       if (p.x > w + 20) p.x = -20;
       if (p.y < -20) p.y = h + 20;

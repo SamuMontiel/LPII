@@ -31,7 +31,7 @@
 
         <div class="game-card" th:each="juego : ${juegos}">
 
-            <img th:src="@{${juego.imagenUrl}}" class="game-image">
+            <img th:src="@{${juego.coverUrl}}" class="game-image">
 
             <div class="game-info">
                 <h3 th:text="${juego.titulo}"></h3>
@@ -42,7 +42,6 @@
                     S/ <span th:text="${juego.precio}"></span>
                 </div>
 
-                <!-- BOTÓN DINÁMICO CORRECTO -->
                 <div th:if="${juegosComprados.contains(juego.id)}">
                     <button class="btn-disabled" disabled>
                         Ya lo tienes

@@ -2,12 +2,11 @@ package com.virtualhub.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.*;
 
 @Entity
 @Table(name = "juegos")
 @Data
-
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Juego {
@@ -17,10 +16,15 @@ public class Juego {
     private Long id;
 
     private String titulo;
-    private String descripcion;
-    private Double precio;
-    private String imagenUrl;
 
-    @OneToMany(mappedBy = "juego")
-    private List<Resena> resenas = new ArrayList<>();
+    @Column(length = 1000)
+    private String descripcion;
+
+    private Double precio;
+
+    // NUEVOS CAMPOS
+    private String bannerUrl;
+    private String coverUrl;
+    private String logoUrl;
+    private String screenshotBaseName;
 }
