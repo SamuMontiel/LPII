@@ -1,0 +1,206 @@
+/* Fondo general */
+/* Fondo Cibercore Dark Blue */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top, #0a0f2c, #050817);
+    color: #e0eaff;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Canvas partículas */
+#particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+/* Tabla */
+table {
+    width: 80%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: rgba(10, 20, 60, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 15px;
+    text-align: center;
+}
+
+th {
+    background: #08104d;
+    color: #00bfff;
+}
+
+tr:hover {
+    background: rgba(0, 191, 255, 0.1);
+}
+
+/* Botones */
+button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.btn-confirmar {
+    background: linear-gradient(90deg, #0040ff, #00bfff);
+    color: white;
+    font-weight: bold;
+    padding: 12px 25px;
+    box-shadow: 0 0 15px #00bfff;
+}
+
+.btn-confirmar:hover {
+    box-shadow: 0 0 25px #00bfff;
+    transform: scale(1.08);
+}
+
+/* Overlay Confirmación */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,20,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.overlay-box {
+    background: #0d1b4c;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 0 30px #00bfff;
+    animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: #0d1435;
+    box-shadow: 0 0 15px #001aff55;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #4da3ff;
+    text-shadow: 0 0 8px #1f6fff;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #9bbcff;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #4da3ff;
+    text-shadow: 0 0 6px #4da3ff;
+}
+
+.saldo-box {
+    background: #111a44;
+    padding: 8px 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #002aff55;
+}
+
+/* Contenedor */
+.carrito-container {
+    padding: 40px;
+    max-width: 900px;
+    margin: auto;
+}
+
+/* Tabla */
+.tabla-carrito {
+    width: 100%;
+    border-collapse: collapse;
+    background: #111a44;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 20px #001aff33;
+}
+
+.tabla-carrito th {
+    background: #1a237e;
+    padding: 15px;
+    text-align: left;
+    color: #ffffff;
+}
+
+.tabla-carrito td {
+    padding: 15px;
+    border-bottom: 1px solid #1f2b5e;
+}
+
+.tabla-carrito tr:hover {
+    background: #16205a;
+}
+
+/* Botones */
+button {
+    cursor: pointer;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-eliminar {
+    background: #2a1a5e;
+    color: #ff5c8a;
+}
+
+.btn-eliminar:hover {
+    background: #3c2a8a;
+    box-shadow: 0 0 10px #ff2f6d;
+}
+
+.confirmar-box {
+    margin-top: 30px;
+    text-align: right;
+}
+
+.btn-confirmar {
+    background: #0044ff;
+    color: white;
+    padding: 12px 20px;
+    font-size: 15px;
+}
+
+.btn-confirmar:hover {
+    background: #1f6fff;
+    box-shadow: 0 0 15px #1f6fff;
+}
