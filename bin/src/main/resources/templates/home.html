@@ -1,92 +1,297 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>VirtualHub - Inicio</title>
+    <title>VirtualHub - Tienda</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<div class="navbar">
+<header class="navbar">
     <div class="logo">VirtualHub</div>
-    <div class="nav-links">
-        <a th:href="@{/biblioteca}">Biblioteca</a>
-        <a th:href="@{/logout}">Cerrar sesión</a>
-    </div>
-</div>
 
-<div class="main-container">
-    <div class="user-panel">
-        <h2 th:text="'Bienvenido, ' + ${usuario.nombre}"></h2>
+    <div class="user-info">
+        <span th:text="${usuario.nombre}"></span>
 
-        <p class="saldo">
-            Saldo disponible: $
-            <span id="saldoValor"
-                  th:text="${usuario.saldo}">
+        <span class="saldo">
+            S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
+        </span>
+
+        <a th:href="@{/biblioteca}" class="btn-nav">Biblioteca</a>
+
+        <!-- 🛒 CARRITO -->
+        <a th:href="@{/carrito}" class="btn-nav cart-btn">
+            🛒 Carrito
+            <span class="cart-count"
+                  th:if="${cantidadCarrito != null and cantidadCarrito > 0}"
+                  th:text="${cantidadCarrito}">
             </span>
-        </p>
+        </a>
+
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn-logout">Cerrar sesión</button>
+        </form>
     </div>
+</header>
 
-    <div class="games-container">
 
-        <div class="game-card"
-             th:each="juego : ${juegos}">
+<!-- HERO -->
+<section class="hero-slider" th:if="${juegos != null and !juegos.isEmpty()}">
 
-            <img th:src="@{${juego.imagenUrl}}"
-                 alt="Juego">
+	<div class="hero-slide"
+	     th:each="juego,iter : ${juegos}"
+	     th:classappend="${iter.index == 0} ? ' active' : ''"
+	     th:if="${juego.bannerUrl != null}"
+	     th:style="'background-image:url(' + ${juego.bannerUrl} + ')'">
 
-            <h3>
-                <a th:href="@{/juego/{id}(id=${juego.id})}"
-                   th:text="${juego.titulo}">
-                </a>
-            </h3>
+        <div class="hero-overlay"></div>
 
+        <div class="hero-content">
+            <h1 th:text="${juego.titulo}"></h1>
             <p th:text="${juego.descripcion}"></p>
 
-            <p class="precio"
-               th:text="'$' + ${juego.precio}">
-            </p>
-
-            <div th:if="${usuario.biblioteca.contains(juego)}">
-                <button class="btn-disabled" disabled>
-                    Ya lo tienes
-                </button>
+            <div class="hero-price">
+                S/ <span th:text="${juego.precio}"></span>
             </div>
 
-            <div th:if="${!usuario.biblioteca.contains(juego)}">
-                <form th:action="@{/comprar/{id}(id=${juego.id})}"
-                      method="post">
-                    <button class="btn-comprar"
-                            type="submit">
-                        Comprar
+            <div th:if="${juegosComprados.contains(juego.id)}">
+                <button class="btn-disabled" disabled>En tu biblioteca</button>
+            </div>
+
+            <div th:unless="${juegosComprados.contains(juego.id)}">
+                <form th:action="@{/comprar/{id}(id=${juego.id})}" method="post">
+                    <button class="btn-comprar hero-btn">
+                        Comprar ahora
                     </button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-indicators">
+        <span th:each="juego,iter : ${juegos}"
+              th:classappend="${iter.index == 0} ? ' active' : ''"></span>
+    </div>
+</section>
+<section class="recommended"
+         th:if="${juegos != null and juegos.size() > 4}">
+
+    <h2 class="section-title">✨ Recomendado para ti</h2>
+
+    <div class="recommended-row">
+
+        <div class="recommended-card"
+             th:each="juego,iter : ${juegos}"
+             th:if="${iter.index > 0 and iter.index < 5}">
+
+            <img th:src="@{${juego.coverUrl}}">
+
+            <div class="recommended-info">
+                <h3 th:text="${juego.titulo}"></h3>
+                <span>S/ <span th:text="${juego.precio}"></span></span>
             </div>
 
         </div>
 
     </div>
+</section>
 
+
+<!-- TIENDA -->
+<main class="store-container">
+
+    <h2 class="section-title">Tienda</h2>
+
+    <div class="games-grid">
+
+        <div class="game-card" th:each="juego : ${juegos}">
+
+            <img th:src="@{${juego.coverUrl}}" class="game-image">
+
+            <div class="game-info">
+
+                <h3 th:text="${juego.titulo}"></h3>
+                <p th:text="${juego.descripcion}"></p>
+
+                <div class="price">
+                    S/ <span th:text="${juego.precio}"></span>
+                </div>
+
+                <div th:if="${juegosComprados.contains(juego.id)}">
+                    <button class="btn-disabled" disabled>
+                        En la biblioteca
+                    </button>
+                </div>
+
+                <div th:unless="${juegosComprados.contains(juego.id)}">
+                    <form th:action="@{/carrito/agregar/{id}(id=${juego.id})}"
+                          method="post">
+
+                        <button class="btn-comprar"
+                                type="submit"
+                                onclick="animarAlCarrito(this)">
+                            Agregar al carrito
+                        </button>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+
+
+<!-- TOAST -->
+<div class="toast-notification" id="toast">
+    ✔ Juego agregado al carrito
 </div>
 
+<!-- SONIDO -->
+<audio id="addSound"
+       src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3">
+</audio>
+
+
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const saldo = document.getElementById("saldoValor");
+document.addEventListener("DOMContentLoaded", function() {
 
-        if (!saldo) return;
+    // ===== SLIDER =====
+    const slides = document.querySelectorAll(".hero-slide");
+    const indicators = document.querySelectorAll(".hero-indicators span");
 
-        const finalValue = parseFloat(saldo.innerText);
+    if (slides.length > 0) {
         let current = 0;
-        const increment = finalValue / 40;
 
-        const counter = setInterval(() => {
-            current += increment;
-            if (current >= finalValue) {
-                current = finalValue;
-                clearInterval(counter);
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove("active"));
+            indicators.forEach(i => i.classList.remove("active"));
+            slides[index].classList.add("active");
+            indicators[index].classList.add("active");
+            current = index;
+        }
+
+        function nextSlide() {
+            let next = current + 1;
+            if (next >= slides.length) next = 0;
+            showSlide(next);
+        }
+
+        setInterval(nextSlide, 5000);
+
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener("click", () => showSlide(index));
+        });
+    }
+
+    // ===== BOTÓN CARRITO =====
+    document.querySelectorAll(".btn-comprar").forEach(btn => {
+
+        btn.addEventListener("click", function() {
+
+            const toast = document.getElementById("toast");
+            toast.classList.add("show");
+
+            document.getElementById("addSound").play();
+
+            // Actualizar contador visual
+            const countSpan = document.querySelector(".cart-count");
+
+            if (countSpan) {
+                let value = parseInt(countSpan.innerText || "0");
+                countSpan.innerText = value + 1;
+            } else {
+                const carrito = document.querySelector(".cart-btn");
+                const nuevo = document.createElement("span");
+                nuevo.className = "cart-count";
+                nuevo.innerText = "1";
+                carrito.appendChild(nuevo);
             }
-            saldo.innerText = current.toFixed(2);
-        }, 20);
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2000);
+
+        });
+
     });
+
+});
+
+
+// ===== ANIMACIÓN VOLAR AL CARRITO =====
+function animarAlCarrito(button) {
+
+    const card = button.closest(".game-card");
+    const img = card.querySelector("img");
+    const carrito = document.querySelector(".cart-btn");
+
+    if (!img || !carrito) return;
+
+    const imgRect = img.getBoundingClientRect();
+    const carritoRect = carrito.getBoundingClientRect();
+
+    const clon = img.cloneNode(true);
+
+    clon.style.position = "fixed";
+    clon.style.left = imgRect.left + "px";
+    clon.style.top = imgRect.top + "px";
+    clon.style.width = imgRect.width + "px";
+    clon.style.height = imgRect.height + "px";
+    clon.style.transition = "all 0.7s ease-in-out";
+    clon.style.zIndex = "9999";
+    clon.style.borderRadius = "12px";
+
+    document.body.appendChild(clon);
+
+    setTimeout(() => {
+        clon.style.left = carritoRect.left + "px";
+        clon.style.top = carritoRect.top + "px";
+        clon.style.width = "30px";
+        clon.style.height = "30px";
+        clon.style.opacity = "0.5";
+    }, 10);
+
+    setTimeout(() => clon.remove(), 700);
+}
+
+// Hover 3D
+document.querySelectorAll(".game-card").forEach(card => {
+
+    card.addEventListener("mousemove", e => {
+
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = (y - centerY) / 15;
+        const rotateY = (centerX - x) / 15;
+
+        card.style.transform =
+            `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+
+    });
+
+    card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateX(0) rotateY(0) scale(1)";
+    });
+
+});
+
+// Parallax hero
+window.addEventListener("scroll", () => {
+
+    const hero = document.querySelector(".hero-slide.active");
+    if (!hero) return;
+
+    const offset = window.scrollY * 0.4;
+    hero.style.backgroundPosition = `center ${offset}px`;
+
+});
+
 </script>
 
 </body>
