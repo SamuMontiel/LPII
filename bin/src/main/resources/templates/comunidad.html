@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comunidad - VirtualHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/perfil.css}">
+</head>
+<body class="community-page">
+
+<header class="steam-navbar">
+    <div class="navbar-inner">
+        <a th:href="@{/home}" class="navbar-logo">🎮 <span>VirtualHub</span></a>
+        <nav class="navbar-tabs">
+            <a th:href="@{/home}" class="tab-item">TIENDA</a>
+            <a th:href="@{/biblioteca}" class="tab-item">BIBLIOTECA</a>
+            <a th:href="@{/comunidad}" class="tab-item active">COMUNIDAD</a>
+            <a th:href="@{/perfil}" class="tab-item">PERFIL</a>
+        </nav>
+    </div>
+</header>
+
+<div class="profile-wrapper">
+    <div class="profile-left">
+        <h3 class="section-title">Comunidad de Juegos</h3>
+
+        <div th:each="juego : ${juegos}" class="activity-card-modern">
+            <img th:src="@{${juego.coverUrl}}" class="activity-cover">
+
+            <div class="activity-info">
+                <h4 th:text="${juego.titulo}"></h4>
+                <p th:text="${juego.descripcion}"></p>
+
+                <!-- Lista de comentarios -->
+                <div class="comments-section">
+                    <h5>Comentarios</h5>
+                    <div th:each="comentario : ${juego.comentarios}" class="comment-card">
+                        <strong th:text="${comentario.usuario.nombre}"></strong>
+                        <span th:text="${#temporals.format(comentario.fecha,'dd MMM yyyy HH:mm')}"></span>
+                        <p th:text="${comentario.contenido}"></p>
+                    </div>
+                </div>
+
+                <!-- Formulario para comentar -->
+                <form th:action="@{/comunidad/comentar}" method="post" class="comment-form">
+                    <input type="hidden" name="juegoId" th:value="${juego.id}">
+                    <textarea name="contenido" placeholder="Escribe tu comentario..." required></textarea>
+                    <button type="submit" class="btn-edit-profile">Comentar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-right">
+        <div class="sidebar-card">
+            <h5>Usuarios Activos</h5>
+            <p th:each="usuario : ${usuarios}">
+                • <span th:text="${usuario.nombre}"></span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    VirtualHub © 2026
+</footer>
+
+</body>
+</html>

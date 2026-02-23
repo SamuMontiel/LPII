@@ -1,5 +1,8 @@
 package com.virtualhub.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +30,7 @@ public class Juego {
     private String coverUrl;
     private String logoUrl;
     private String screenshotBaseName;
+
+    @OneToMany(mappedBy = "juego", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios = new ArrayList<>();
 }

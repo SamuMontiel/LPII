@@ -1,6 +1,6 @@
 package com.virtualhub.controller;
 
-import com.virtualhub.entity.Comentario;
+import com.virtualhub.model.Comentario;
 import com.virtualhub.model.Juego;
 import com.virtualhub.model.Usuario;
 import com.virtualhub.repository.ComentarioRepository;
@@ -23,39 +23,87 @@ public class ComunidadController {
     private JuegoRepository juegoRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private ComentarioRepository comentarioRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @GetMapping
-    public String comunidad(Model model) {
+    public String mostrarComunidad(Model model, Principal principal) {
         List<Juego> juegos = juegoRepository.findAll();
-        List<Usuario> usuarios = usuarioRepository.findAll();
-
-        // Cargar comentarios asociados a cada juego
-        juegos.forEach(juego -> {
-            List<Comentario> comentarios = comentarioRepository.findByJuegoId(juego.getId());
-            juego.setComentarios(comentarios);
-        });
-
         model.addAttribute("juegos", juegos);
+
+        List<Usuario> usuarios = usuarioRepository.findAll();
         model.addAttribute("usuarios", usuarios);
+
+        if (principal != null) {
+            Usuario usuarioLogueado = usuarioRepository.findByEmail(principal.getName())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            model.addAttribute("usuarioLogueado", usuarioLogueado);
+        }
+
         return "comunidad";
     }
 
     @PostMapping("/comentar")
-    public String comentar(@RequestParam Long juegoId,
-                           @RequestParam String contenido,
-                           Principal principal) {
-        Usuario usuario = usuarioRepository.findByEmail(principal.getName());
+    public String agregarComentario(@RequestParam Long juegoId,
+                                    @RequestParam String contenido,
+                                    Principal principal) {
+        Usuario usuario = usuarioRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Juego juego = juegoRepository.findById(juegoId).orElseThrow();
+
         Comentario comentario = new Comentario();
         comentario.setContenido(contenido);
         comentario.setFecha(LocalDateTime.now());
         comentario.setUsuario(usuario);
-        comentario.setJuego(juegoRepository.findById(juegoId).orElse(null));
+        comentario.setJuego(juego);
 
         comentarioRepository.save(comentario);
         return "redirect:/comunidad";
     }
+
+    @PostMapping("/editar")
+    public String editarComentario(@RequestParam Long comentarioId,
+                                   @RequestParam String contenido,
+                                   Principal principal) {
+        Comentario comentario = comentarioRepository.findById(comentarioId).orElseThrow();
+        if (!comentario.getUsuario().getEmail().equals(principal.getName())) {
+            throw new RuntimeException("No tienes permiso para editar este comentario");
+        }
+        comentario.setContenido(contenido);
+        comentarioRepository.save(comentario);
+        return "redirect:/comunidad";
+    }
+
+    @PostMapping("/responder")
+    public String responderComentario(@RequestParam Long comentarioId,
+                                      @RequestParam String contenido,
+                                      Principal principal) {
+        Usuario usuario = usuarioRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Comentario comentarioPadre = comentarioRepository.findById(comentarioId).orElseThrow();
+
+        Comentario respuesta = new Comentario();
+        respuesta.setContenido(contenido);
+        respuesta.setFecha(LocalDateTime.now());
+        respuesta.setUsuario(usuario);
+        respuesta.setJuego(comentarioPadre.getJuego());
+        respuesta.setComentarioPadre(comentarioPadre);
+
+
+        comentarioRepository.save(respuesta);
+        return "redirect:/comunidad";
+    }
+
+    @PostMapping("/borrar")
+    public String borrarComentario(@RequestParam Long comentarioId, Principal principal) {
+        Comentario comentario = comentarioRepository.findById(comentarioId).orElseThrow();
+        if (!comentario.getUsuario().getEmail().equals(principal.getName())) {
+            throw new RuntimeException("No tienes permiso para borrar este comentario");
+        }
+        comentarioRepository.delete(comentario);
+        return "redirect:/comunidad";
+    }
 }
+

@@ -1,12 +1,15 @@
+
+<!--HECHO POR LEONEL LEANDRO CIBERTEC GRACIAS POR TANTO UWUWUWUWUWUWUWUWUWUWUWUWUWUWU-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Comunidad - VirtualHub</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/perfil.css}">
+    <link rel="stylesheet" th:href="@{/css/comunidad.css}">
 </head>
 <body class="community-page">
+	<div id="particles-js"></div>
 
 <header class="steam-navbar">
     <div class="navbar-inner">
@@ -25,7 +28,7 @@
         <h3 class="section-title">Comunidad de Juegos</h3>
 
         <div th:each="juego : ${juegos}" class="activity-card-modern">
-            <img th:src="@{${juego.coverUrl}}" class="activity-cover">
+            <img th:src="${juego.coverUrl}" class="activity-cover">
 
             <div class="activity-info">
                 <h4 th:text="${juego.titulo}"></h4>
@@ -34,10 +37,48 @@
                 <!-- Lista de comentarios -->
                 <div class="comments-section">
                     <h5>Comentarios</h5>
-                    <div th:each="comentario : ${juego.comentarios}" class="comment-card">
-                        <strong th:text="${comentario.usuario.nombre}"></strong>
-                        <span th:text="${#temporals.format(comentario.fecha,'dd MMM yyyy HH:mm')}"></span>
-                        <p th:text="${comentario.contenido}"></p>
+
+                    <!-- Si hay comentarios -->
+                    <div th:if="${!#lists.isEmpty(juego.comentarios)}">
+                        <div th:each="comentario : ${juego.comentarios}" class="comment-card">
+                            <strong th:text="${comentario.usuario.nombre}"></strong>
+                            <span th:text="${#temporals.format(comentario.fecha,'dd MMM yyyy HH:mm')}"></span>
+                            <p th:text="${comentario.contenido}"></p>
+
+                            <!-- Formulario de edición (solo autor) -->
+                            <form th:if="${comentario.usuario.email == usuarioLogueado.email}"
+                                  th:action="@{/comunidad/editar}" method="post" class="edit-form">
+                                <input type="hidden" name="comentarioId" th:value="${comentario.id}">
+                                <textarea name="contenido" th:text="${comentario.contenido}" required></textarea>
+                                <button type="submit">Guardar cambios</button>
+                            </form>
+
+                            <!-- Botón borrar (solo autor) -->
+                            <form th:if="${comentario.usuario.email == usuarioLogueado.email}"
+                                  th:action="@{/comunidad/borrar}" method="post" class="delete-form">
+                                <input type="hidden" name="comentarioId" th:value="${comentario.id}">
+                                <button type="submit" class="btn-delete">Borrar</button>
+                            </form>
+
+                            <!-- Formulario para responder -->
+                            <form th:action="@{/comunidad/responder}" method="post" class="reply-form">
+                                <input type="hidden" name="comentarioId" th:value="${comentario.id}">
+                                <textarea name="contenido" placeholder="Responder..." required></textarea>
+                                <button type="submit">Responder</button>
+                            </form>
+
+                            <!-- Lista de respuestas -->
+                            <div class="reply-section" th:each="respuesta : ${comentario.respuestas}">
+                                <strong th:text="${respuesta.usuario.nombre}"></strong>
+                                <span th:text="${#temporals.format(respuesta.fecha,'dd MMM yyyy HH:mm')}"></span>
+                                <p th:text="${respuesta.contenido}"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Si NO hay comentarios -->
+                    <div th:if="${#lists.isEmpty(juego.comentarios)}">
+                        <p class="no-comments">Todavía no hay comentarios para este juego. ¡Sé el primero en comentar!</p>
                     </div>
                 </div>
 
@@ -64,6 +105,54 @@
 <footer class="footer">
     VirtualHub © 2026
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+particlesJS("particles-js", {
+  "particles": {
+    "number": {
+      "value": 80,
+      "density": { "enable": true, "value_area": 800 }
+    },
+    "color": { "value": "#66c0f4" },
+    "shape": { "type": "circle" },
+    "opacity": {
+      "value": 0.5,
+      "random": false
+    },
+    "size": {
+      "value": 3,
+      "random": true
+    },
+    "line_linked": {
+      "enable": true,
+      "distance": 150,
+      "color": "#66c0f4",
+      "opacity": 0.4,
+      "width": 1
+    },
+    "move": {
+      "enable": true,
+      "speed": 2,
+      "direction": "none",
+      "random": false,
+      "straight": false,
+      "out_mode": "out"
+    }
+  },
+  "interactivity": {
+    "detect_on": "canvas",
+    "events": {
+      "onhover": { "enable": true, "mode": "grab" },
+      "onclick": { "enable": true, "mode": "push" }
+    },
+    "modes": {
+      "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
+      "push": { "particles_nb": 4 }
+    }
+  },
+  "retina_detect": true
+});
+</script>
 
 </body>
 </html>
