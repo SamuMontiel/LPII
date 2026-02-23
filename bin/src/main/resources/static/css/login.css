@@ -1,0 +1,219 @@
+/* login.css - VirtualHub Cibercore Dark Blue con borde neón */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+:root{
+  --bg:#071028;
+  --panel:#0b1630cc;
+  --glass:#0f2a4d66;
+  --accent:#00b0ff;
+  --accent-2:#6be0ff;
+  --muted:#9fb6d8;
+  --danger:#ff6b6b;
+  --success:#6bffb8;
+  --glass-border:rgba(255,255,255,0.06);
+  --shadow: 0 10px 30px rgba(2,6,23,0.7);
+  --radius:14px;
+  --neon-width:3px;
+}
+
+/* Reset ligero */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(0,176,255,0.06), transparent),
+              radial-gradient(900px 400px at 90% 90%, rgba(107,224,255,0.03), transparent),
+              linear-gradient(180deg, var(--bg) 0%, #041226 100%);
+  color:#e6f3ff;
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Canvas de partículas (fondo) */
+#vh-particles-canvas{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:0.9;
+  mix-blend-mode:screen;
+}
+
+/* Contenedor central */
+.login-container{
+  width:100%;
+  max-width:420px;
+  margin:auto;
+  padding:18px;
+  position:relative;
+  z-index:3; /* por encima del canvas */
+}
+
+/* Caja principal con borde neón */
+.login-box{
+  background: linear-gradient(180deg, rgba(15,42,77,0.55), rgba(6,18,36,0.55));
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(8px) saturate(120%);
+  box-shadow: var(--shadow);
+  border-radius:var(--radius);
+  padding:34px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+
+/* Borde neón animado: pseudo-elementos para glow y animación */
+.login-box::before,
+.login-box::after{
+  content:"";
+  position:absolute;
+  inset: -6px;
+  border-radius: calc(var(--radius) + 6px);
+  z-index:-1;
+  pointer-events:none;
+}
+.login-box::before{
+  background: linear-gradient(90deg, rgba(0,176,255,0.12), rgba(107,224,255,0.06));
+  filter: blur(10px);
+  opacity:0.9;
+}
+.login-box::after{
+  inset: -var(--neon-width);
+  background: conic-gradient(from 0deg, rgba(0,176,255,0.85), rgba(107,224,255,0.65), rgba(0,176,255,0.85));
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: var(--neon-width);
+  filter: blur(6px) saturate(140%);
+  animation: neon-rotate 6s linear infinite;
+  opacity:0.95;
+}
+
+/* Animación sutil del borde neón */
+@keyframes neon-rotate{
+  0%{ transform: rotate(0deg) }
+  50%{ transform: rotate(180deg) }
+  100%{ transform: rotate(360deg) }
+}
+
+/* Título */
+.login-box h2{
+  font-family:'Orbitron', sans-serif;
+  font-weight:700;
+  letter-spacing:1px;
+  color:var(--accent-2);
+  margin-bottom:18px;
+  font-size:28px;
+  text-shadow: 0 2px 18px rgba(0,176,255,0.12);
+}
+
+/* Mensajes */
+.error-message, .success-message{
+  font-size:13px;
+  padding:10px 12px;
+  border-radius:10px;
+  margin-bottom:14px;
+  display:inline-block;
+  width:100%;
+  text-align:left;
+}
+.error-message{
+  background:linear-gradient(90deg, rgba(255,107,107,0.06), rgba(255,107,107,0.02));
+  color:var(--danger);
+  border:1px solid rgba(255,107,107,0.08);
+}
+.success-message{
+  background:linear-gradient(90deg, rgba(107,255,184,0.04), rgba(107,255,184,0.02));
+  color:var(--success);
+  border:1px solid rgba(107,255,184,0.06);
+}
+
+/* Formulario */
+form{
+  margin-top:6px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+input[type="text"], input[type="password"]{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  padding:12px 14px;
+  border-radius:10px;
+  color:var(--muted);
+  outline:none;
+  transition:box-shadow .18s ease, border-color .18s ease, transform .08s ease;
+  font-size:14px;
+}
+input::placeholder{ color: rgba(159,182,216,0.45); }
+input:focus{
+  box-shadow: 0 6px 30px rgba(0,176,255,0.12);
+  border-color:var(--accent);
+  color:#eaf8ff;
+  transform:translateY(-1px);
+}
+
+/* Botón */
+button[type="submit"]{
+  margin-top:6px;
+  background:linear-gradient(90deg, var(--accent), var(--accent-2));
+  color:#021226;
+  font-weight:600;
+  padding:12px 16px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  box-shadow: 0 8px 30px rgba(0,176,255,0.12);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+button[type="submit"]:hover{
+  transform:translateY(-3px);
+  box-shadow: 0 18px 50px rgba(0,176,255,0.16);
+}
+
+/* Link registro */
+.login-box a{
+  display:block;
+  margin-top:14px;
+  color:var(--muted);
+  font-size:13px;
+  text-decoration:none;
+  transition:color .12s ease, text-shadow .12s ease;
+}
+.login-box a:hover{
+  color:var(--accent-2);
+  text-shadow:0 6px 20px rgba(0,176,255,0.06);
+}
+
+.login-box .logo-strip{
+  height:6px;
+  width:100%;
+  border-radius:8px;
+  margin-bottom:14px;
+  background:linear-gradient(90deg, rgba(0,176,255,0.18), rgba(107,224,255,0.08));
+}
+@media (max-width:480px){
+  .login-box{ padding:22px; border-radius:12px }
+  .login-box h2{ font-size:22px }
+}
+
+:focus{ outline: 3px solid rgba(0,176,255,0.12); outline-offset:2px; }
+#vh-bg-particles-canvas{
+  position:fixed;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  opacity:0.55;
+  mix-blend-mode: screen;
+  transition:opacity .3s ease;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  #vh-bg-particles-canvas { display:none; }
+}

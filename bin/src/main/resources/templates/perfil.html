@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil - VirtualHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="profile-page">
+
+<!-- ================= NAVBAR ================= -->
+<header class="steam-navbar">
+    <div class="navbar-inner">
+        <a th:href="@{/home}" class="navbar-logo">🎮 <span>VirtualHub</span></a>
+
+        <nav class="navbar-tabs">
+            <a th:href="@{/home}" th:classappend="${activePage == 'home'} ? 'active' : ''" class="tab-item">TIENDA</a>
+            <a th:href="@{/biblioteca}" th:classappend="${activePage == 'biblioteca'} ? 'active' : ''" class="tab-item">BIBLIOTECA</a>
+            <a th:href="@{/comunidad}" th:classappend="${activePage == 'comunidad'} ? 'active' : ''" class="tab-item">COMUNIDAD</a>
+            <a th:href="@{/perfil}" th:classappend="${activePage == 'perfil'} ? 'active' : ''" class="tab-item">PERFIL</a>
+        </nav>
+
+        <div class="navbar-right">
+            <div class="saldo-pill">
+                <i class="fas fa-wallet"></i>
+                S/ <span th:text="${#numbers.formatDecimal(usuario.saldo,1,2)}"></span>
+            </div>
+
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+
+<!-- ================= HERO ================= -->
+
+<div class="steam-profile-hero"
+     th:style="'background-image: url(' + 
+     (${juegoMasJugado != null ? juegoMasJugado.juego.bannerUrl : '/images/banners/cyberpunk2077-banner.jpg'}) 
+     + ')'">
+
+    <div class="steam-overlay"></div>
+
+    <div class="hero-content-wrapper">
+
+        <div class="hero-left">
+            <img src="/images/hogwarts-legacy.jpg" class="hero-avatar">
+
+            <div class="hero-text">
+                <h1 th:text="${#strings.toUpperCase(usuario.nombre)}"></h1>
+
+                <div class="hero-stats">
+                    <div class="stat-box">
+                        <span class="stat-value" th:text="${nivel}"></span>
+                        <span class="stat-label">Nivel</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <span class="stat-value" th:text="${biblioteca.size()}"></span>
+                        <span class="stat-label">Juegos</span>
+                    </div>
+                </div>
+
+                <div class="favorite-game">
+                    Más jugado:
+                    <strong th:text="${juegoMasJugado != null ? juegoMasJugado.juego.titulo : 'Ninguno'}"></strong>
+                </div>
+
+                <button class="btn-edit-profile">Editar Perfil</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ================= CONTENIDO GRID ================= -->
+
+<div class="profile-wrapper">
+
+    <!-- IZQUIERDA -->
+    <div class="profile-left">
+
+        <h3 class="section-title">Actividad Reciente</h3>
+
+        <div th:each="uj : ${biblioteca}"
+             th:if="${uj != null and uj.juego != null}"
+             class="activity-card-modern">
+
+            <img th:src="@{${uj.juego.coverUrl}}"
+                 class="activity-cover"
+                 onerror="this.src='/images/covers/cyberpunk2077-cover.jpg'">
+
+            <div class="activity-info">
+                <h4 th:text="${uj.juego.titulo}"></h4>
+
+                <div class="activity-meta">
+                    <span th:text="${#numbers.formatDecimal(uj.horasJugadas,1,1)} + ' h jugadas'"></span>
+                    <span>•</span>
+                    <span th:text="${uj.ultimaSesion != null ? #temporals.format(uj.ultimaSesion,'dd MMM yyyy') : 'Sin datos'}"></span>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill"
+                         th:style="'width:' + (${uj.horasJugadas != null ? uj.horasJugadas * 5 : 0}) + '%'">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DERECHA -->
+    <div class="profile-right">
+
+        <div class="sidebar-card">
+            <h4>Nivel <span th:text="${nivel}"></span></h4>
+            <div class="xp-bar">
+                <div class="xp-fill"
+                     th:style="'width:' + ${xp} + '%'"></div>
+            </div>
+        </div>
+
+        <div class="sidebar-card">
+            <h5>Estadísticas</h5>
+            <p>Total juegos: <strong th:text="${biblioteca.size()}"></strong></p>
+            <p>Juego favorito:
+                <strong th:text="${juegoMasJugado != null ? juegoMasJugado.juego.titulo : 'Ninguno'}"></strong>
+            </p>
+        </div>
+
+        <div class="sidebar-card">
+            <h5>Amigos</h5>
+            <p>• Wyoxiel <span class="status online">En línea</span></p>
+            <p>• ITS-RAINING <span class="status offline">Desconectado</span></p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer class="footer">
+    VirtualHub © 2026 
+	
+</footer>
+
+</body>
+</html>
