@@ -1,125 +1,134 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca - VirtualHub</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <meta name="_csrf" th:content="${_csrf.token}" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
-
 <body class="steam-body">
 
-<!-- NAVBAR -->
-<div class="steam-navbar">
-    <div class="nav-left">
-        <span class="nav-item">Tienda</span>
-        <span class="nav-item active">BIBLIOTECA</span>
-        <span class="nav-item">COMUNIDAD</span>
-        <span class="nav-item">WAAAAAA</span>
-    </div>
-</div>
+	
+	<header class="steam-navbar">
+	    <div class="navbar-inner">
+	        <!-- LOGO -->
+	        <a href="/home" class="navbar-logo">
+	            🎮 <span>VirtualHub</span>
+	        </a>
+
+	        <!-- PESTAÑAS -->
+	        <nav class="navbar-tabs">
+	            <a th:href="@{/home}" 
+	               th:classappend="${activePage == 'home'} ? 'active' : ''" 
+	               class="tab-item">TIENDA</a>
+	            
+	            <a th:href="@{/biblioteca}" 
+	               th:classappend="${activePage == 'biblioteca'} ? 'active' : ''" 
+	               class="tab-item">BIBLIOTECA</a>
+	            
+	            <a th:href="@{/comunidad}" 
+	               th:classappend="${activePage == 'comunidad'} ? 'active' : ''" 
+	               class="tab-item">COMUNIDAD</a>
+	        </nav>
+
+	        <!-- ZONA DERECHA - NOMBRE EN MAYÚSCULAS + ENLACE A PERFIL -->
+	        <div class="navbar-right">
+	            <div class="saldo-pill">
+	                <i class="fas fa-wallet"></i>
+	                S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
+	            </div>
+	            
+	            <!-- 🔥 NOMBRE EN MAYÚSCULAS Y CLICKABLE -->
+	            <a th:href="@{/perfil}" 
+	               class="username-link"
+	               th:text="${#strings.toUpperCase(usuario.nombre)}"></a>
+	            
+	            <form th:action="@{/logout}" method="post" style="display:inline;">
+	                <button type="submit" class="logout-btn">Cerrar sesión</button>
+	            </form>
+	        </div>
+	    </div>
+	</header>
+
 
 <div class="library-container">
 
-    <!-- SIDEBAR -->
-	<div class="library-sidebar">
+    <!-- SIDEBAR (con protección null-safe) -->
+    <div class="library-sidebar">
+        <div class="sidebar-header">
+            <select class="library-filter">
+                <option>Juegos</option>
+                <option>Instalados</option>
+                <option>Favoritos</option>
+            </select>
+            <div class="sidebar-icons">
+                <span>⏰</span>
+                <span>⚙</span>
+            </div>
+        </div>
 
-	    <div class="sidebar-header">
-	        <select class="library-filter">
-	            <option>Juegos</option>
-	            <option>Instalados</option>
-	            <option>Favoritos</option>
-	        </select>
+        <div class="sidebar-search">
+            <input type="text" placeholder="Buscar en biblioteca...">
+        </div>
 
-	        <div class="sidebar-icons">
-	            <span>⏰</span>
-	            <span>⚙</span>
-	        </div>
-	    </div>
+        <div class="game-list">
+            <div th:each="uj,iter : ${biblioteca}" th:if="${uj != null and uj.juego != null}">
+                <div class="game-item"
+                     th:classappend="${iter.index == 0} ? ' active' : ''"
+                     th:onclick="'mostrarJuego(' + ${uj.juego.id} + ', this)'">
 
-	    <div class="sidebar-search">
-	        <input type="text" placeholder="Buscar en biblioteca...">
-	    </div>
+                    <div class="sidebar-game-content">
+                        <img th:if="${uj.juego.logoUrl != null}" 
+                             th:src="@{${uj.juego.logoUrl}}" 
+                             class="sidebar-logo" onerror="this.style.display='none'">
+                        <span class="sidebar-title" th:text="${uj.juego.titulo}"></span>
+                    </div>
 
-	    <div class="game-list">
-	        <div th:each="uj,iter : ${biblioteca}">
+                    <div class="sidebar-right">
+                        <span class="favorite-star">☆</span>
+                        <span th:if="${uj.jugando}" class="playing-dot">●</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	            <div class="game-item"
-	                 th:classappend="${iter.index == 0} ? ' active' : ''"
-	                 th:onclick="'mostrarJuego(' + ${uj.juego.id} + ', this)'">
-
-	                <div class="sidebar-game-content">
-	                    <img th:if="${uj.juego.logoUrl != null}"
-	                         th:src="@{${uj.juego.logoUrl}}"
-	                         class="sidebar-logo">
-
-	                    <span class="sidebar-title"
-	                          th:text="${uj.juego.titulo}"></span>
-	                </div>
-
-	                <div class="sidebar-right">
-	                    <span class="favorite-star">☆</span>
-	                    <span th:if="${uj.jugando}" class="playing-dot">●</span>
-	                </div>
-
-	            </div>
-
-	        </div>
-	    </div>
-
-	</div>
-
-    <!-- MAIN -->
+    <!-- MAIN (tu código original intacto, solo con null-safe extra) -->
     <div class="library-main">
         <div class="dynamic-bg"></div>
 
-        <div th:each="uj,iter : ${biblioteca}"
+        <div th:each="uj,iter : ${biblioteca}" th:if="${uj != null and uj.juego != null}"
              th:id="'panel-' + ${uj.juego.id}"
              th:class="'game-panel ' + (${iter.index == 0} ? 'visible' : '')">
 
             <!-- BANNER -->
-            <div class="game-banner"
-                 th:if="${uj.juego.bannerUrl != null}"
+            <div class="game-banner" th:if="${uj.juego.bannerUrl != null}"
                  th:style="'background-image:url(' + ${uj.juego.bannerUrl} + ')'">
-
                 <div class="banner-overlay"></div>
-
                 <div class="banner-content">
-
                     <div class="banner-left">
-
-                        <!-- DETENER -->
-                        <button class="btn-install stop"
-                                th:if="${uj.jugando}"
-                                th:attr="data-id=${uj.juego.id}"
-                                onclick="detenerJuego(this)">
+                        <button class="btn-install stop" th:if="${uj.jugando}" 
+                                th:attr="data-id=${uj.juego.id}" onclick="detenerJuego(this)">
                             DETENER
                         </button>
 
-                        <!-- INSTALAR / JUGAR -->
                         <div th:if="${!uj.jugando}">
-
                             <div class="install-container">
-
-                                <button class="btn-install install-btn"
-                                        onclick="simularInstalacion(this)">
+                                <button class="btn-install install-btn" onclick="simularInstalacion(this)">
                                     INSTALAR
                                 </button>
-
                                 <div class="install-progress hidden">
                                     <div class="progress-bar"></div>
                                     <span class="progress-text">0%</span>
                                 </div>
-
                             </div>
-
-                            <button class="btn-install play-btn hidden"
-                                    th:attr="data-id=${uj.juego.id}"
-                                    onclick="iniciarJuego(this)">
+                            <button class="btn-install play-btn hidden" 
+                                    th:attr="data-id=${uj.juego.id}" onclick="iniciarJuego(this)">
                                 JUGAR
                             </button>
-
                         </div>
-
                     </div>
 
                     <div class="banner-stats">
@@ -127,67 +136,48 @@
                             <span class="stat-title">ÚLTIMA SESIÓN</span>
                             <span th:text="${#temporals.format(uj.ultimaSesion,'dd MMM')}"></span>
                         </div>
-
                         <div>
                             <span class="stat-title">TIEMPO DE JUEGO</span>
                             <span th:text="${#numbers.formatDecimal(uj.horasJugadas,1,1)} + ' horas'"></span>
                         </div>
                     </div>
-
                 </div>
             </div>
+			
+			<br><br><br><br><br>
 
-            <br><br><br><br><br><br>
-
-            <!-- DETALLES -->
+            <!-- DETALLES (tu código original intacto) -->
             <div class="game-details">
-
                 <div class="game-title-section">
-                    <img th:if="${uj.juego.logoUrl != null}"
-                         th:src="@{${uj.juego.logoUrl}}"
-                         class="game-logo-left">
+                    <img th:if="${uj.juego.logoUrl != null}" 
+                         th:src="@{${uj.juego.logoUrl}}" 
+                         class="game-logo-left" onerror="this.style.display='none'">
                     <h2 th:text="${uj.juego.titulo}"></h2>
                 </div>
-
                 <p th:text="${uj.juego.descripcion}"></p>
 
-                <!-- TIMER -->
-                <div class="live-status"
-                     th:if="${uj.jugando}">
+                <div class="live-status" th:if="${uj.jugando}">
                     🟢 Jugando ahora
-                    <span class="timer"
-                          th:data-inicio="${uj.horaInicio}">
-                        00:00
-                    </span>
+                    <span class="timer" th:data-inicio="${uj.horaInicio}">00:00</span>
                 </div>
 
-                <!-- TRAILER -->
-                <div class="trailer-section"
-                     th:if="${uj.juego.trailerUrl != null and uj.juego.trailerUrl != ''}">
+                <div class="trailer-section" th:if="${uj.juego.trailerUrl != null and uj.juego.trailerUrl != ''}">
                     <h3>Trailer</h3>
                     <div class="trailer-container">
-                        <iframe class="game-trailer"
-                                th:data-src="${uj.juego.trailerUrl}"
-                                allow="autoplay; encrypted-media"
-                                allowfullscreen>
-                        </iframe>
+                        <iframe class="game-trailer" th:data-src="${uj.juego.trailerUrl}" 
+                                allow="autoplay; encrypted-media" allowfullscreen></iframe>
                     </div>
                 </div>
 
-                <!-- SCREENSHOTS -->
-                <div class="screenshots"
-                     th:if="${uj.juego.screenshotBaseName != null}">
+                <div class="screenshots" th:if="${uj.juego.screenshotBaseName != null}">
                     <h3>Capturas</h3>
                     <div class="screenshot-row">
-                        <img th:each="i : ${#numbers.sequence(1,5)}"
-                             th:src="@{'/images/screenshots/' 
-                             + ${uj.juego.screenshotBaseName} 
-                             + '-' + ${i} + '.jpg'}"
-                             onerror="this.style.display='none'"
+                        <img th:each="i : ${#numbers.sequence(1,5)}" 
+                             th:src="@{'/images/screenshots/' + ${uj.juego.screenshotBaseName} + '-' + ${i} + '.jpg'}"
+                             onerror="this.style.display='none'" 
                              class="screenshot-thumb">
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -201,69 +191,42 @@
     </div>
 </div>
 
+<!-- TU JAVASCRIPT ORIGINAL (intacto al 100%) -->
 <script>
-
-// ============================
-// CAMBIAR JUEGO
-// ============================
-
+/* ============================ CAMBIAR JUEGO ============================ */
 function mostrarJuego(id, element) {
-
     detenerTodosLosTrailers();
-
-    document.querySelectorAll(".game-panel")
-        .forEach(p => p.classList.remove("visible"));
-
-    document.querySelectorAll(".game-item")
-        .forEach(i => i.classList.remove("active"));
-
+    document.querySelectorAll(".game-panel").forEach(p => p.classList.remove("visible"));
+    document.querySelectorAll(".game-item").forEach(i => i.classList.remove("active"));
     const panel = document.getElementById("panel-" + id);
     panel.classList.add("visible");
     element.classList.add("active");
-
     const banner = panel.querySelector(".game-banner");
-
     if (banner) {
-        document.querySelector(".dynamic-bg")
-            .style.backgroundImage = banner.style.backgroundImage;
+        document.querySelector(".dynamic-bg").style.backgroundImage = banner.style.backgroundImage;
     }
-
     activarTrailer(panel);
 }
 
-// ============================
-// TRAILER
-// ============================
-
+/* ============================ TRAILER ============================ */
 function activarTrailer(panel) {
-
     const iframe = panel.querySelector(".game-trailer");
     if (!iframe) return;
-
     const url = iframe.dataset.src;
     if (!url) return;
-
     iframe.src = url + "?autoplay=1&mute=1";
 }
-
 function detenerTodosLosTrailers() {
-    document.querySelectorAll(".game-trailer")
-        .forEach(i => i.src = "");
+    document.querySelectorAll(".game-trailer").forEach(i => i.src = "");
 }
 
-// ============================
-// JUGAR
-// ============================
-
+/* ============================ JUGAR / DETENER / INSTALAR ============================ */
 function iniciarJuego(button) {
-
     const overlay = document.getElementById("launchOverlay");
     overlay.style.display = "flex";
-
     setTimeout(() => {
         const id = button.dataset.id;
         const csrf = document.querySelector('meta[name="_csrf"]').content;
-
         fetch("/jugar/" + id, {
             method: "POST",
             headers: { "X-CSRF-TOKEN": csrf }
@@ -271,27 +234,16 @@ function iniciarJuego(button) {
     }, 1000);
 }
 
-// ============================
-// DETENER
-// ============================
-
 function detenerJuego(button) {
-
     const id = button.dataset.id;
     const csrf = document.querySelector('meta[name="_csrf"]').content;
-
     fetch("/cerrar-juego/" + id, {
         method: "POST",
         headers: { "X-CSRF-TOKEN": csrf }
     }).then(() => location.reload());
 }
 
-// ============================
-// INSTALAR
-// ============================
-
 function simularInstalacion(button) {
-
     const container = button.closest(".install-container");
     const progressBox = container.querySelector(".install-progress");
     const progressBar = progressBox.querySelector(".progress-bar");
@@ -302,93 +254,59 @@ function simularInstalacion(button) {
     progressBox.classList.remove("hidden");
 
     let progreso = 0;
-
     const intervalo = setInterval(() => {
-
         progreso += 10;
-
         if (progreso >= 100) {
             clearInterval(intervalo);
             progressText.innerText = "Instalado ✔";
-
             setTimeout(() => {
                 progressBox.classList.add("hidden");
                 playBtn.classList.remove("hidden");
             }, 800);
         }
-
         progressBar.style.width = progreso + "%";
         progressText.innerText = progreso + "%";
-
     }, 300);
 }
 
-// ============================
-// INIT + TIMER
-// ============================
-
+/* ============================ INIT + TIMER ============================ */
 document.addEventListener("DOMContentLoaded", function() {
-
     const firstPanel = document.querySelector(".game-panel.visible");
-
     if (firstPanel) {
         const banner = firstPanel.querySelector(".game-banner");
         if (banner) {
-            document.querySelector(".dynamic-bg")
-                .style.backgroundImage = banner.style.backgroundImage;
+            document.querySelector(".dynamic-bg").style.backgroundImage = banner.style.backgroundImage;
         }
-
         activarTrailer(firstPanel);
     }
 
     document.querySelectorAll(".timer").forEach(timer => {
-
         if (!timer.dataset.inicio) return;
-
         const inicio = new Date(timer.dataset.inicio);
-
         setInterval(() => {
-
             const ahora = new Date();
             const diff = Math.floor((ahora - inicio) / 1000);
-
             let min = Math.floor(diff / 60);
             let sec = diff % 60;
-
-            timer.innerText =
-                String(min).padStart(2,'0') + ":" +
-                String(sec).padStart(2,'0');
-
+            timer.innerText = String(min).padStart(2,'0') + ":" + String(sec).padStart(2,'0');
         }, 1000);
     });
-
 });
-// FAVORITOS
+
+/* Favoritos y buscador */
 document.addEventListener("click", function(e) {
     if (e.target.classList.contains("favorite-star")) {
         e.stopPropagation();
         e.target.classList.toggle("active");
-        e.target.textContent =
-            e.target.classList.contains("active") ? "★" : "☆";
+        e.target.textContent = e.target.classList.contains("active") ? "★" : "☆";
     }
 });
-
-// BUSCADOR
-document.querySelector(".sidebar-search input")
-.addEventListener("input", function() {
-
+document.querySelector(".sidebar-search input").addEventListener("input", function() {
     const value = this.value.toLowerCase();
-
     document.querySelectorAll(".game-item").forEach(item => {
-
-        const title = item.querySelector(".sidebar-title")
-                          .textContent
-                          .toLowerCase();
-
-        item.style.display =
-            title.includes(value) ? "flex" : "none";
+        const title = item.querySelector(".sidebar-title").textContent.toLowerCase();
+        item.style.display = title.includes(value) ? "flex" : "none";
     });
-
 });
 </script>
 

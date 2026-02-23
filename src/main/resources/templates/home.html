@@ -6,44 +6,47 @@
 </head>
 <body>
 
-	<header class="navbar">
-	    <div class="logo">VirtualHub</div>
-
+<header class="navbar">
+    <div class="logo">VirtualHub</div>
 
     <div class="user-info">
         <span th:text="${usuario.nombre}"></span>
 
-	        <span class="saldo">
-	            S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
-	        </span>
+        <span class="saldo">
+            S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
+        </span>
 
-	        <a th:href="@{/biblioteca}" class="btn-nav">Biblioteca</a>
+        <a th:href="@{/biblioteca}" class="btn-nav">Biblioteca</a>
 
-	        <!-- NUEVO BOTÓN CARRITO -->
-	        <a th:href="@{/carrito}" class="btn-nav">Carrito</a>
+        <!-- 🛒 CARRITO -->
+        <a th:href="@{/carrito}" class="btn-nav cart-btn">
+            🛒 Carrito
+            <span class="cart-count"
+                  th:if="${cantidadCarrito != null and cantidadCarrito > 0}"
+                  th:text="${cantidadCarrito}">
+            </span>
+        </a>
 
-	        <form th:action="@{/logout}" method="post" style="display:inline;">
-	            <button type="submit" class="btn-logout">Cerrar sesión</button>
-	        </form>
-	    </div>
-	</header>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn-logout">Cerrar sesión</button>
+        </form>
+    </div>
+</header>
 
 
-<!-- ================= HERO SLIDER ================= -->
+<!-- HERO -->
+<section class="hero-slider" th:if="${juegos != null and !juegos.isEmpty()}">
 
-<section class="hero-slider" th:if="${juegos.size() > 0}">
-
-    <div class="hero-slide"
-         th:each="juego,iter : ${juegos}"
-         th:classappend="${iter.index == 0} ? ' active' : ''"
-         th:style="'background-image:url(' + ${juego.coverUrl} + ')'">
+	<div class="hero-slide"
+	     th:each="juego,iter : ${juegos}"
+	     th:classappend="${iter.index == 0} ? ' active' : ''"
+	     th:if="${juego.bannerUrl != null}"
+	     th:style="'background-image:url(' + ${juego.bannerUrl} + ')'">
 
         <div class="hero-overlay"></div>
 
         <div class="hero-content">
-
             <h1 th:text="${juego.titulo}"></h1>
-
             <p th:text="${juego.descripcion}"></p>
 
             <div class="hero-price">
@@ -51,9 +54,7 @@
             </div>
 
             <div th:if="${juegosComprados.contains(juego.id)}">
-                <button class="btn-disabled" disabled>
-                    En tu biblioteca
-                </button>
+                <button class="btn-disabled" disabled>En tu biblioteca</button>
             </div>
 
             <div th:unless="${juegosComprados.contains(juego.id)}">
@@ -63,39 +64,30 @@
                     </button>
                 </form>
             </div>
-
         </div>
     </div>
 
-    <!-- INDICADORES -->
     <div class="hero-indicators">
         <span th:each="juego,iter : ${juegos}"
               th:classappend="${iter.index == 0} ? ' active' : ''"></span>
     </div>
-
 </section>
+<section class="recommended"
+         th:if="${juegos != null and juegos.size() > 4}">
 
+    <h2 class="section-title">✨ Recomendado para ti</h2>
 
-<!-- ================= OFERTAS ================= -->
+    <div class="recommended-row">
 
-<section class="special-offers" th:if="${juegos.size() > 0}">
-    <h2 class="section-title">🔥 Ofertas especiales</h2>
-
-    <div class="offers-row">
-
-        <div class="offer-card"
+        <div class="recommended-card"
              th:each="juego,iter : ${juegos}"
-             th:if="${iter.index < 3}">
+             th:if="${iter.index > 0 and iter.index < 5}">
 
             <img th:src="@{${juego.coverUrl}}">
 
-            <div class="offer-badge">-30%</div>
-
-            <div class="offer-info">
+            <div class="recommended-info">
                 <h3 th:text="${juego.titulo}"></h3>
-                <span class="offer-price">
-                    S/ <span th:text="${juego.precio}"></span>
-                </span>
+                <span>S/ <span th:text="${juego.precio}"></span></span>
             </div>
 
         </div>
@@ -104,8 +96,7 @@
 </section>
 
 
-<!-- ================= TIENDA ================= -->
-
+<!-- TIENDA -->
 <main class="store-container">
 
     <h2 class="section-title">Tienda</h2>
@@ -119,7 +110,6 @@
             <div class="game-info">
 
                 <h3 th:text="${juego.titulo}"></h3>
-
                 <p th:text="${juego.descripcion}"></p>
 
                 <div class="price">
@@ -132,62 +122,176 @@
                     </button>
                 </div>
 
-				<div th:unless="${juegosComprados.contains(juego.id)}">
-					<form th:action="@{'/carrito/agregar/' + ${juego.id}}" method="post">
-					    <button class="btn-comprar" type="submit">
-					        Agregar al carrito
-					    </button>
-					</form>
-				</div>
+                <div th:unless="${juegosComprados.contains(juego.id)}">
+                    <form th:action="@{/carrito/agregar/{id}(id=${juego.id})}"
+                          method="post">
+
+                        <button class="btn-comprar"
+                                type="submit"
+                                onclick="animarAlCarrito(this)">
+                            Agregar al carrito
+                        </button>
+
+                    </form>
+                </div>
+
             </div>
         </div>
+
     </div>
 </main>
 
 
-<!-- ================= SLIDER JS ================= -->
+<!-- TOAST -->
+<div class="toast-notification" id="toast">
+    ✔ Juego agregado al carrito
+</div>
+
+<!-- SONIDO -->
+<audio id="addSound"
+       src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3">
+</audio>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
+    // ===== SLIDER =====
     const slides = document.querySelectorAll(".hero-slide");
     const indicators = document.querySelectorAll(".hero-indicators span");
 
-    if (slides.length === 0) return;
+    if (slides.length > 0) {
+        let current = 0;
 
-    let current = 0;
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove("active"));
+            indicators.forEach(i => i.classList.remove("active"));
+            slides[index].classList.add("active");
+            indicators[index].classList.add("active");
+            current = index;
+        }
 
-    function showSlide(index) {
-        slides.forEach(s => s.classList.remove("active"));
-        indicators.forEach(i => i.classList.remove("active"));
+        function nextSlide() {
+            let next = current + 1;
+            if (next >= slides.length) next = 0;
+            showSlide(next);
+        }
 
-        slides[index].classList.add("active");
-        indicators[index].classList.add("active");
+        setInterval(nextSlide, 5000);
 
-        current = index;
-    }
-
-    function nextSlide() {
-        let next = current + 1;
-        if (next >= slides.length) next = 0;
-        showSlide(next);
-    }
-
-    setInterval(nextSlide, 5000);
-
-    indicators.forEach((indicator, index) => {
-        indicator.addEventListener("click", () => showSlide(index));
-    });
-
-    // Animación botón comprar
-    document.querySelectorAll(".btn-comprar").forEach(btn => {
-        btn.addEventListener("click", function() {
-            btn.innerText = "Procesando...";
-            btn.style.background = "#1f6ed4";
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener("click", () => showSlide(index));
         });
+    }
+
+    // ===== BOTÓN CARRITO =====
+    document.querySelectorAll(".btn-comprar").forEach(btn => {
+
+        btn.addEventListener("click", function() {
+
+            const toast = document.getElementById("toast");
+            toast.classList.add("show");
+
+            document.getElementById("addSound").play();
+
+            // Actualizar contador visual
+            const countSpan = document.querySelector(".cart-count");
+
+            if (countSpan) {
+                let value = parseInt(countSpan.innerText || "0");
+                countSpan.innerText = value + 1;
+            } else {
+                const carrito = document.querySelector(".cart-btn");
+                const nuevo = document.createElement("span");
+                nuevo.className = "cart-count";
+                nuevo.innerText = "1";
+                carrito.appendChild(nuevo);
+            }
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2000);
+
+        });
+
     });
 
 });
+
+
+// ===== ANIMACIÓN VOLAR AL CARRITO =====
+function animarAlCarrito(button) {
+
+    const card = button.closest(".game-card");
+    const img = card.querySelector("img");
+    const carrito = document.querySelector(".cart-btn");
+
+    if (!img || !carrito) return;
+
+    const imgRect = img.getBoundingClientRect();
+    const carritoRect = carrito.getBoundingClientRect();
+
+    const clon = img.cloneNode(true);
+
+    clon.style.position = "fixed";
+    clon.style.left = imgRect.left + "px";
+    clon.style.top = imgRect.top + "px";
+    clon.style.width = imgRect.width + "px";
+    clon.style.height = imgRect.height + "px";
+    clon.style.transition = "all 0.7s ease-in-out";
+    clon.style.zIndex = "9999";
+    clon.style.borderRadius = "12px";
+
+    document.body.appendChild(clon);
+
+    setTimeout(() => {
+        clon.style.left = carritoRect.left + "px";
+        clon.style.top = carritoRect.top + "px";
+        clon.style.width = "30px";
+        clon.style.height = "30px";
+        clon.style.opacity = "0.5";
+    }, 10);
+
+    setTimeout(() => clon.remove(), 700);
+}
+
+// Hover 3D
+document.querySelectorAll(".game-card").forEach(card => {
+
+    card.addEventListener("mousemove", e => {
+
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = (y - centerY) / 15;
+        const rotateY = (centerX - x) / 15;
+
+        card.style.transform =
+            `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+
+    });
+
+    card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateX(0) rotateY(0) scale(1)";
+    });
+
+});
+
+// Parallax hero
+window.addEventListener("scroll", () => {
+
+    const hero = document.querySelector(".hero-slide.active");
+    if (!hero) return;
+
+    const offset = window.scrollY * 0.4;
+    hero.style.backgroundPosition = `center ${offset}px`;
+
+});
+
 </script>
 
 </body>

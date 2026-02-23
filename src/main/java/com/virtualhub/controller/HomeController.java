@@ -15,8 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,13 +25,20 @@ public class HomeController {
     private final JuegoService juegoService;
     private final UsuarioJuegoService usuarioJuegoService;
 
-    @GetMapping("/home")
+    @GetMapping({"/", "/home"})
     public String home(Model model, Authentication authentication) {
 
-        Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
+        if (authentication == null) {
+            return "redirect:/login";
+        }
+
+        Usuario usuario =
+                usuarioService.buscarPorEmail(authentication.getName());
 
         List<Juego> juegos = juegoService.listarTodos();
-        List<UsuarioJuego> biblioteca = usuarioJuegoService.obtenerBiblioteca(usuario);
+
+        List<UsuarioJuego> biblioteca =
+                usuarioJuegoService.obtenerBiblioteca(usuario);
 
         Set<Long> juegosComprados = biblioteca.stream()
                 .map(uj -> uj.getJuego().getId())
@@ -41,6 +47,7 @@ public class HomeController {
         model.addAttribute("usuario", usuario);
         model.addAttribute("juegos", juegos);
         model.addAttribute("juegosComprados", juegosComprados);
+        model.addAttribute("activePage", "home"); // 🔥 IMPORTANTE
 
         return "home";
     }
