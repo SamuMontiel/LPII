@@ -5,28 +5,31 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario_logro")
+@Table(name = "capturas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UsuarioLogro {
+public class Captura {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
     
     @ManyToOne
-    @JoinColumn(name = "logro_id")
-    private Logro logro;
+    @JoinColumn(name = "juego_id", nullable = false)
+    private Juego juego;
     
-    private Integer progreso = 0;
+    private String titulo;
     
-    private Boolean completado = false;
+    @Column(nullable = false)
+    private String imagenUrl;
     
-    private LocalDateTime fechaCompletado;
+    private LocalDateTime fechaSubida;
+    
+    private Integer likes = 0;
 }

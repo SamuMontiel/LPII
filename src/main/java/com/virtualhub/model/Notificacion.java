@@ -5,12 +5,12 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario_logro")
+@Table(name = "notificaciones")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UsuarioLogro {
+public class Notificacion {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,13 +20,11 @@ public class UsuarioLogro {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
     
-    @ManyToOne
-    @JoinColumn(name = "logro_id")
-    private Logro logro;
+    private String mensaje;
     
-    private Integer progreso = 0;
+    private String tipo; // LOGRO, AMIGO, SISTEMA
     
-    private Boolean completado = false;
+    private Boolean leida = false;
     
-    private LocalDateTime fechaCompletado;
+    private LocalDateTime fechaCreacion;
 }

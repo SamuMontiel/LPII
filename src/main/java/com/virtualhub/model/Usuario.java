@@ -20,6 +20,13 @@ public class Usuario {
     private String password;
 
     private Double saldo = 500.0;
+    
+    @Column(length = 500) 
+    private String bio;
+    
+    private String avatarUrl;
+    
+    private String bannerColor = "#1f2833"; 
 
     @ManyToMany
     @JoinTable(
@@ -31,4 +38,11 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario")
     private List<Resena> resenas = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UsuarioLogro> logros = new ArrayList<>();
+
+    private Integer nivel = 1;
+    private Integer xp = 0;
+    private Integer horasTotales = 0;
 }

@@ -5,28 +5,28 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario_logro")
+@Table(name = "amigos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UsuarioLogro {
+public class Amigo {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
     
     @ManyToOne
-    @JoinColumn(name = "logro_id")
-    private Logro logro;
+    @JoinColumn(name = "amigo_id", nullable = false)
+    private Usuario amigo;
     
-    private Integer progreso = 0;
+    private String estado; // PENDIENTE, ACEPTADO, RECHAZADO
     
-    private Boolean completado = false;
+    private LocalDateTime fechaSolicitud;
     
-    private LocalDateTime fechaCompletado;
+    private LocalDateTime fechaAceptacion;
 }

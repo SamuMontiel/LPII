@@ -1,36 +1,54 @@
 package com.virtualhub.service;
 
+import com.virtualhub.dto.PerfilDTO;
 import com.virtualhub.model.Usuario;
 import com.virtualhub.repository.UsuarioRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public UsuarioService(UsuarioRepository usuarioRepository,
-                          PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public Usuario guardarUsuario(Usuario usuario) {
-
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuario.setSaldo(1000.0);
-
-        return usuarioRepository.save(usuario);
-    }
-    public Usuario guardar(Usuario usuario) {
-        return usuarioRepository.save(usuario);
-    }
 
     public Usuario buscarPorEmail(String email) {
         return usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
     
+    public Usuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+    
+    // ✅ AGREGAR ESTE MÉTODO
+    @Transactional
+    public Usuario guardar(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+    
+    @Transactional
+    public Usuario actualizarPerfil(Long usuarioId, PerfilDTO perfilDTO) {
+        Usuario usuario = buscarPorId(usuarioId);
+        
+        if (perfilDTO.getNombre() != null && !perfilDTO.getNombre().isEmpty()) {
+            usuario.setNombre(perfilDTO.getNombre());
+        }
+        
+        if (perfilDTO.getBio() != null) {
+            usuario.setBio(perfilDTO.getBio());
+        }
+        
+        if (perfilDTO.getAvatarUrl() != null && !perfilDTO.getAvatarUrl().isEmpty()) {
+            usuario.setAvatarUrl(perfilDTO.getAvatarUrl());
+        }
+        
+        if (perfilDTO.getBannerColor() != null && !perfilDTO.getBannerColor().isEmpty()) {
+            usuario.setBannerColor(perfilDTO.getBannerColor());
+        }
+        
+        return usuarioRepository.save(usuario);
+    }
 }

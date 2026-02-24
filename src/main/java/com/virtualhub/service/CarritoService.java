@@ -18,12 +18,10 @@ public class CarritoService {
 
     public void agregar(Usuario usuario, Juego juego) {
 
-        // Si ya lo tiene comprado, no permitir
         if (usuarioJuegoService.existe(usuario, juego)) {
             return;
         }
 
-        // Evitar duplicado en carrito
         carritoRepository.findByUsuarioAndJuego(usuario, juego)
                 .orElseGet(() -> {
                     Carrito item = new Carrito();

@@ -115,6 +115,11 @@ public class UsuarioJuegoService {
                 .findByUsuarioAndJuego(usuario, juego)
                 .isPresent();
     }
+    public double calcularHorasTotales(Usuario usuario) {
+        return usuarioJuegoRepository.findByUsuario(usuario).stream()
+                .mapToDouble(uj -> uj.getHorasJugadas() != null ? uj.getHorasJugadas() : 0)
+                .sum();
+    }
     
     
     
