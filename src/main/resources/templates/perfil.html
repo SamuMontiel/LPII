@@ -6,179 +6,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/perfil.css}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <script>
-        // JavaScript para el slider  
-        let currentIndex = 0;
-        const slides = [];
-
-        function initSlider() {
-            const slideElements = document.querySelectorAll('.slide');
-            slideElements.forEach(slide => slides.push(slide));
-            showSlide(currentIndex);
-            setInterval(nextSlide, 5000); // Cambia cada 5 segundos  
-        }
-
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.remove('active');
-                if (i === index) {
-                    slide.classList.add('active');
-                }
-            });
-        }
-
-        function nextSlide() {
-            currentIndex = (currentIndex + 1) % slides.length;
-            showSlide(currentIndex);
-        }
-
-        window.onload = initSlider;
-    </script>
 </head>
-
 <body class="profile-page">
 
-<!-- ================= NAVBAR ================= -->
-<header class="steam-navbar">
-    <div class="navbar-inner">
-        <a th:href="@{/home}" class="navbar-logo">🎮 <span>VirtualHub</span></a>
+	<!-- NAVBAR CORREGIDO -->
+	<header class="steam-navbar">
+	    <div class="navbar-container">
+	        <div class="navbar-left">
+	            <a th:href="@{/home}" class="navbar-logo">🎮 <span>VirtualHub</span></a>
+	            <nav class="navbar-tabs">
+	                <a th:href="@{/home}" th:classappend="${activePage == 'home'} ? 'active' : ''" class="tab-item">TIENDA</a>
+	                <a th:href="@{/biblioteca}" th:classappend="${activePage == 'biblioteca'} ? 'active' : ''" class="tab-item">BIBLIOTECA</a>
+	                <a th:href="@{/comunidad}" th:classappend="${activePage == 'comunidad'} ? 'active' : ''" class="tab-item">COMUNIDAD</a>
+	                <a th:href="@{/perfil}" th:classappend="${activePage == 'perfil'} ? 'active' : ''" class="tab-item">PERFIL</a>
+	            </nav>
+	        </div>
+	        <div class="navbar-right">
+	            <div class="saldo-pill">
+	                <i class="fas fa-wallet"></i> S/ <span th:text="${#numbers.formatDecimal(usuario.saldo,1,2)}"></span>
+	            </div>
+	            <form th:action="@{/logout}" method="post" class="logout-form">
+	                <button type="submit" class="logout-btn">Cerrar sesión</button>
+	            </form>
+	        </div>
+	    </div>
+	</header>
 
-        <nav class="navbar-tabs">
-            <a th:href="@{/home}" th:classappend="${activePage == 'home'} ? 'active' : ''" class="tab-item">TIENDA</a>
-            <a th:href="@{/biblioteca}" th:classappend="${activePage == 'biblioteca'} ? 'active' : ''" class="tab-item">BIBLIOTECA</a>
-            <a th:href="@{/comunidad}" th:classappend="${activePage == 'comunidad'} ? 'active' : ''" class="tab-item">COMUNIDAD</a>
-            <a th:href="@{/perfil}" th:classappend="${activePage == 'perfil'} ? 'active' : ''" class="tab-item">PERFIL</a>
-        </nav>
+<!-- HERO BANNER -->
+<div class="steam-profile-hero" 
+     th:style="'background-image: url(' + (${juegoMasJugado != null ? juegoMasJugado.juego.bannerUrl : '/images/banners/cyberpunk2077-banner.jpg'}) + ')'">
 
-        <div class="navbar-right">
-            <div class="saldo-pill">
-                <i class="fas fa-wallet"></i>
-                S/ <span th:text="${#numbers.formatDecimal(usuario.saldo,1,2)}"></span>
-            </div>
-
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="logout-btn">Cerrar sesión</button>
-            </form>
-        </div>
-    </div>
-</header>
-
-<!-- ================= HERO ================= -->
-<div class="steam-profile-hero">
-    <div class="slider">
-        <div class="slides">
-            <div class="slide active">
-                <img src="/images/banner1.jpg" alt="Juego 1">
-            </div>
-            <div class="slide">
-                <img src="/images/banner2.jpg" alt="Juego 2">
-            </div>
-            <div class="slide">
-                <img src="/images/banner3.jpg" alt="Juego 3">
-            </div>
-            <!-- Agrega más imágenes según sea necesario -->
+    <!-- AVATAR MÁS PEQUEÑO Y CENTRADO A LA IZQUIERDA -->
+    <div class="avatar-container">
+        <div class="avatar-frame">
+            <img src="/images/hogwarts-legacy.jpg" alt="Avatar">
         </div>
     </div>
 
-    <div class="steam-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-name" th:text="${#strings.toUpperCase(usuario.nombre)}"></h1>
+        <p class="real-name" th:text="${usuario.nombre}"></p>
+        
+        <div class="most-played">
+            El juego más jugado es: 
+            <strong th:text="${juegoMasJugado != null ? juegoMasJugado.juego.titulo : 'Ninguno'}"></strong>
+        </div>
+        
+        <button class="btn-edit-profile">MODIFICAR PERFIL</button>
+    </div>
+</div>
 
-    <div class="hero-content-wrapper">
-        <div class="hero-left">
-            <img src="/images/hogwarts-legacy.jpg" class="hero-avatar">
+<!-- CONTENIDO -->
+<div class="main-container">
+    <div class="profile-grid">
+        <!-- SIDEBAR IZQUIERDA -->
+        <div class="sidebar">
+            <div class="sidebar-card">
+                <h4>Nivel <span class="level">3</span></h4>
+                <div class="xp-bar"><div class="xp-fill"></div></div>
+            </div>
+            <div class="sidebar-card">
+                <h5>Estadísticas</h5>
+                <p>Total juegos: <strong th:text="${biblioteca.size()}"></strong></p>
+                <p>Juego favorito: <strong th:text="${juegoMasJugado != null ? juegoMasJugado.juego.titulo : 'Ninguno'}"></strong></p>
+            </div>
+            <div class="sidebar-card">
+                <h5>Amigos</h5>
+                <p>• Wyoxiel <span class="status online">En línea</span></p>
+                <p>• ITS-RAINING <span class="status offline">Desconectado</span></p>
+            </div>
+        </div>
 
-            <div class="hero-text">
-                <h1 th:text="${#strings.toUpperCase(usuario.nombre)}"></h1>
-
-                <div class="hero-stats">
-                    <div class="stat-box">
-                        <span class="stat-value" th:text="${nivel}"></span>
-                        <span class="stat-label">Nivel</span>
-                    </div>
-
-                    <div class="stat-box">
-                        <span class="stat-value" th:text="${biblioteca.size()}"></span>
-                        <span class="stat-label">Juegos</span>
+        <!-- CENTRO - ACTIVIDAD RECIENTE -->
+        <div class="activity-section">
+            <h3 class="section-title">Actividad Reciente</h3>
+            <div th:each="uj : ${biblioteca}" th:if="${uj != null and uj.juego != null}" class="activity-card-modern">
+                <img th:src="@{${uj.juego.coverUrl}}" class="activity-cover" 
+                     onerror="this.src='/images/covers/cyberpunk2077-cover.jpg'">
+                <div class="activity-info">
+                    <h4 th:text="${uj.juego.titulo}"></h4>
+                    <p th:text="${uj.juego.descripcion}"></p>
+                    <div class="activity-meta">
+                        <span th:text="${#numbers.formatDecimal(uj.horasJugadas,1,1)} + ' horas jugadas'"></span>
+                        <span>• Última sesión: <span th:text="${#temporals.format(uj.ultimaSesion,'dd MMM')}"></span></span>
                     </div>
                 </div>
-
-                <div class="favorite-game">
-                    Más jugado:
-                    <strong th:text="${juegoMasJugado != null ? juegoMasJugado.juego.titulo : 'Ninguno'}"></strong>
-                </div>
-
-                <button class="btn-edit-profile">Editar Perfil</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ================= CONTENIDO GRID ================= -->
-<div class="profile-wrapper">
+<footer class="footer">VirtualHub © 2026 • Hecho con ❤️ por Samuel</footer>
 
-    <!-- IZQUIERDA -->
-    <div class="profile-left">
-
-        <h3 class="section-title">Actividad Reciente</h3>
-
-        <div th:each="uj : ${biblioteca}"
-             th:if="${uj != null and uj.juego != null}"
-             class="activity-card-modern">
-
-            <img th:src="@{${uj.juego.coverUrl}}"
-                 class="activity-cover"
-                 onerror="this.src='/images/covers/cyberpunk2077-cover.jpg'">
-
-            <div class="activity-info">
-                <h4 th:text="${uj.juego.titulo}"></h4>
-
-                <div class="activity-meta">
-                    <span th:text="${#numbers.formatDecimal(uj.horasJugadas,1,1)} + ' h jugadas'"></span>
-                    <span>•</span>
-                    <span th:text="${uj.ultimaSesion != null ? #temporals.format(uj.ultimaSesion,'dd MMM yyyy') : 'Sin datos'}"></span>
-                </div>
-
-                <div class="progress-bar">
-                    <div class="progress-fill"
-                         th:style="'width:' + (${uj.horasJugadas != null ? uj.horasJugadas * 5 : 0}) + '%'"></div>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- DERECHA -->
-    <div class="profile-right">
-
-        <div class="sidebar-card">
-            <h4>Nivel <span th:text="${nivel}"></span></h4>
-            <div class="xp-bar">
-                <div class="xp-fill"
-                     th:style="'width:' + ${xp} + '%'"></div>
-            </div>
-        </div>
-
-        <div class="sidebar-card">
-            <h5>Estadísticas</h5>
-            <p>Total juegos: <strong th:text="${biblioteca.size()}"></strong></p>
-            <p>Juego favorito:
-                <strong th:text="${juegoMasJugado != null ? juegoMasJugado.juego.titulo : 'Ninguno'}"></strong>
-            </p>
-        </div>
-
-        <div class="sidebar-card">
-            <h5>Amigos</h5>
-            <p>• Wyoxiel <span class="status online">En línea</span></p>
-            <p>• ITS-RAINING <span class="status offline">Desconectado</span></p>
-        </div>
-
-    </div>
-
-</div>
-
-<footer class="footer">
-    VirtualHub © 2026 
-</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
