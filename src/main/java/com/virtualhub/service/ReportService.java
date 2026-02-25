@@ -17,7 +17,7 @@ public class ReportService {
 
     public byte[] generarFactura(List<Carrito> items, Usuario usuario) throws Exception {
 
-        File file = ResourceUtils.getFile("classpath:reports/factura.jrxml");
+        File file = ResourceUtils.getFile("classpath:reports/factura_virtualhub.jrxml");
         JasperReport jasperReport =
                 JasperCompileManager.compileReport(file.getAbsolutePath());
 
@@ -25,7 +25,7 @@ public class ReportService {
                 new JRBeanCollectionDataSource(items);
 
         double total = items.stream()
-                .mapToDouble(c -> c.getJuego().getPrecio() * c.getCantidad())
+                .mapToDouble(i -> i.getJuego().getPrecio())
                 .sum();
 
         Map<String, Object> parameters = new HashMap<>();

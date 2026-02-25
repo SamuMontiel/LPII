@@ -156,31 +156,44 @@
 	    }
 
 	    // Animación al confirmar
-	    btnConfirmar.addEventListener("click", function(e) {
+		btnConfirmar.addEventListener("click", function(e) {
 
-	        if (btnConfirmar.disabled) return;
+		    if (btnConfirmar.disabled) return;
 
-	        e.preventDefault();
+		    e.preventDefault();
 
-	        const overlay = document.createElement("div");
-	        overlay.className = "compra-exitosa";
+		    const overlay = document.createElement("div");
+		    overlay.className = "compra-exitosa";
 
-	        overlay.innerHTML = `
-	            <div class="compra-box">
-	                <h2>✔ Compra realizada</h2>
-	                <p>Gracias por tu compra en VirtualHub</p>
-	            </div>
-	        `;
+		    overlay.innerHTML = `
+		        <div class="compra-box">
+		            <h2>✔ Compra realizada</h2>
+		            <p>Gracias por tu compra en VirtualHub</p>
+		            <div class="compra-botones">
+		                <button id="btnDescargar" class="btn-accion">
+		                    Descargar factura
+		                </button>
+		                <button id="btnBiblioteca" class="btn-accion secundaria">
+		                    Ir a Biblioteca
+		                </button>
+		            </div>
+		        </div>
+		    `;
 
-	        document.body.appendChild(overlay);
+		    document.body.appendChild(overlay);
 
-	        setTimeout(() => {
-	            e.target.closest("form").submit();
-	        }, 1500);
+		    // Botón descargar factura
+		    document.getElementById("btnDescargar").addEventListener("click", function() {
+		        e.target.closest("form").submit();
+		    });
 
-	    });
+		    // Botón ir a biblioteca
+		    document.getElementById("btnBiblioteca").addEventListener("click", function() {
+		        window.location.href = "/biblioteca";
+		    });
 
-	});
+		});
+		});
 </script>
 </body>
 </html>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_virtualhub" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="13acf49e-4913-4d1b-bccc-113817ad15d1">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="usuarioNombre" class="java.lang.String"/>
+	<parameter name="saldoRestante" class="java.lang.Double"/>
+	<parameter name="totalCompra" class="java.lang.Double"/>
+	<parameter name="usuarioEmail" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="juego.titulo" class="java.lang.String"/>
+	<field name="juego.precio" class="java.lang.Double"/>
+	<background>
+		<band height="7" splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="248" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="451" height="95" backcolor="#000000" uuid="6c6ca4e1-17cd-4913-93d6-5e670ea9ae8a"/>
+				<staticText>
+					<reportElement style="Title" x="0" y="10" width="433" height="66" uuid="a2a2cac8-5a7d-4487-8c54-dab235ce4e21"/>
+					<textElement>
+						<font isBold="false"/>
+					</textElement>
+					<text><![CDATA[Factura de Compra]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="SubTitle" x="157" y="66" width="249" height="29" uuid="8978eac3-c578-41c9-837e-48d2b0184642"/>
+					<textElement>
+						<font size="22" isBold="false"/>
+					</textElement>
+					<text><![CDATA[VirtualHub]]></text>
+				</staticText>
+				<frame>
+					<reportElement mode="Opaque" x="0" y="95" width="451" height="32" forecolor="#000000" backcolor="#CC0000" uuid="e3c14156-5b51-4201-918b-97fdc012e5d4"/>
+					<textField pattern="EEEEE dd MMMMM yyyy">
+						<reportElement x="10" y="6" width="144" height="20" forecolor="#FFFFFF" uuid="5c3301e7-a737-4c59-8a2f-a6c79fd1adb8"/>
+						<textElement textAlignment="Right">
+							<font size="12"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="220" y="2" width="100" height="30" uuid="ccc8b562-83fe-4403-96cb-ab4b2d6115bf"/>
+						<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy")
+.format(new java.util.Date())]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<textField>
+				<reportElement x="10" y="150" width="130" height="30" uuid="0e5bcb4f-3cc3-4945-81a2-c007f0b01d18"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Email: " + $P{usuarioEmail}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="280" y="148" width="100" height="30" uuid="d19649a4-0619-4f19-80f4-07d3ff1b9ca0"/>
+				<textFieldExpression><![CDATA[$F{juego.titulo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="S/ #,##0.00">
+				<reportElement style="Row" x="280" y="182" width="100" height="30" uuid="c97dcb96-f1c0-4a2b-976f-288d02903c80"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA[$F{juego.precio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="170" y="148" width="100" height="30" forecolor="#030303" backcolor="#DBDBDB" uuid="7c15a2b4-a471-42ac-a07e-da4a6c3d9bae"/>
+				<text><![CDATA[Juego:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="180" width="100" height="30" forecolor="#030303" backcolor="#DBDBDB" uuid="28ce5b33-e14e-406e-ae74-b6f898366249"/>
+				<text><![CDATA[Precio]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="187" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="148" width="555" height="24" forecolor="#D0B48E" backcolor="#000000" uuid="729c3539-f946-4d0e-a0a7-bda2815ea1b0"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="513" y="0" width="40" height="20" forecolor="#FFFFFF" uuid="4834e99c-7f6c-485a-b098-50e5187f2ab4"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="433" y="0" width="80" height="20" forecolor="#FFFFFF" uuid="9825b46e-76f1-469a-abb8-a1cc27aad685"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="1" width="197" height="20" forecolor="#FFFFFF" uuid="137d38c7-1a83-4fc5-b156-9d5f1b1a0ddc"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="10" y="-210" width="130" height="30" uuid="4165807d-bc62-4402-bc1c-5fb0bf86a763"/>
+					<textElement textAlignment="Left"/>
+					<textFieldExpression><![CDATA["Cliente: " + $P{usuarioNombre}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<line>
+				<reportElement x="-5" y="90" width="360" height="1" uuid="f053b97a-f4b7-4c1c-ba09-2d74bc88ab80"/>
+			</line>
+			<textField>
+				<reportElement x="10" y="50" width="100" height="30" uuid="186976cb-ee13-4895-93cb-be53929a4f5f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total Compra: " +
+new java.text.DecimalFormat("S/ #,##0.00")
+.format($P{totalCompra})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="50" width="100" height="30" uuid="a62cb55a-e715-4ea8-8bb8-76b909ce19ec"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Saldo Restante: " +
+new java.text.DecimalFormat("S/ #,##0.00")
+.format($P{saldoRestante})]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="21" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="13" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="13" splitType="Stretch"/>
+	</summary>
+</jasperReport>

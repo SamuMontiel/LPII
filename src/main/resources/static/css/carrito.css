@@ -274,24 +274,49 @@ button {
 .compra-exitosa {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,20,0.85);
+    background: rgba(0,0,0,0.8);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
-    animation: fadeIn 0.4s ease-in-out;
+    z-index: 9999;
 }
 
 .compra-box {
-    background: #0d1b4c;
-    padding: 50px;
+    background: #1b2838;
+    padding: 40px;
     border-radius: 12px;
     text-align: center;
-    box-shadow: 0 0 40px #5cdb95aa;
-    animation: pop 0.4s ease-out;
+    color: white;
+    animation: pop 0.4s ease;
 }
 
-.compra-box h2 {
-    color: #5cdb95;
-    margin-bottom: 10px;
+.compra-botones {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-accion {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #00bfff;
+    color: white;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-accion:hover {
+    transform: scale(1.05);
+}
+
+.btn-accion.secundaria {
+    background: #2ecc71;
+}
+
+@keyframes pop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
