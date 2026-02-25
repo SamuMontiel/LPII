@@ -59,9 +59,12 @@
 
             <div th:unless="${juegosComprados.contains(juego.id)}">
                 <form th:action="@{/comprar/{id}(id=${juego.id})}" method="post">
-                    <button class="btn-comprar hero-btn">
-                        Comprar ahora
-                    </button>
+					<button class="hero-btn"
+					        type="button"
+					        th:attr="data-id=${juego.id}"
+					        onclick="irATienda(this)">
+					    Comprar ahora
+					</button>
                 </form>
             </div>
         </div>
@@ -97,7 +100,7 @@
 
 
 <!-- TIENDA -->
-<main class="store-container">
+<main class="store-container" id="tienda">
 
     <h2 class="section-title">Tienda</h2>
 
@@ -126,11 +129,11 @@
                     <form th:action="@{/carrito/agregar/{id}(id=${juego.id})}"
                           method="post">
 
-                        <button class="btn-comprar"
-                                type="submit"
-                                onclick="animarAlCarrito(this)">
-                            Agregar al carrito
-                        </button>
+						  <button class="btn-comprar"
+						          type="submit"
+						          onclick="animarAlCarrito(this)">
+						      Agregar al carrito
+						  </button>
 
                     </form>
                 </div>
@@ -291,6 +294,42 @@ window.addEventListener("scroll", () => {
     hero.style.backgroundPosition = `center ${offset}px`;
 
 });
+
+function irATienda(button) {
+
+    const tienda = document.getElementById("tienda");
+    const juegoId = button.getAttribute("data-id");
+
+    if (!tienda) return;
+
+    // Scroll suave
+    tienda.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+    // Esperamos a que termine el scroll para resaltar
+    setTimeout(() => {
+
+        const cards = document.querySelectorAll(".game-card");
+
+        cards.forEach(card => {
+            const form = card.querySelector("form");
+            if (!form) return;
+
+            if (form.action.includes(juegoId)) {
+
+                card.classList.add("highlight");
+
+                setTimeout(() => {
+                    card.classList.remove("highlight");
+                }, 2000);
+            }
+        });
+
+    }, 500);
+}
+
 
 </script>
 

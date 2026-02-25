@@ -25,15 +25,24 @@
 
     <table class="tabla-carrito">
         <thead>
-            <tr>
-                <th>Juego</th>
-                <th>Precio</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
+			   <tr>
+
+
+			        
+			        <th>Juego</th>
+					<th>Nombre</th>
+			        <th>Precio</th>
+			        <th>Acción</th>
+			    </tr>
+			</thead>
 
         <tbody>
             <tr th:each="item : ${items}">
+				<td>
+				           <img th:src="@{${item.juego.coverUrl}}"
+				                class="carrito-img"
+				                alt="cover">
+				       </td>
                 <td th:text="${item.juego.titulo}"></td>
                 <td>S/ <span th:text="${item.juego.precio}"></span></td>
                 <td>
@@ -52,10 +61,20 @@
             <input type="hidden"
                    th:name="${_csrf.parameterName}"
                    th:value="${_csrf.token}" />
+				   <div class="resumen-compra">
+				       <div class="total-line">
+				           Total: S/ 
+				           <span id="totalCompra"
+				                 th:text="${#numbers.formatDecimal(total,1,2)}"></span>
+				       </div>
 
-            <button type="submit" class="btn-confirmar">
-                Confirmar compra
-            </button>
+				       <div id="mensajeSaldo" class="saldo-error"></div>
+				   </div>
+				   <button type="submit" 
+				           class="btn-confirmar"
+				           id="btnConfirmar">
+				       Confirmar compra
+				   </button>
         </form>
     </div>
 
@@ -123,6 +142,45 @@
         canvas.height = window.innerHeight;
         init();
     });
+	
+	document.addEventListener("DOMContentLoaded", function() {
+
+	    const saldo = parseFloat(document.querySelector(".saldo-box span").innerText);
+	    const total = parseFloat(document.getElementById("totalCompra").innerText);
+	    const btnConfirmar = document.getElementById("btnConfirmar");
+	    const mensaje = document.getElementById("mensajeSaldo");
+
+	    if (total > saldo) {
+	        btnConfirmar.disabled = true;
+	        mensaje.innerText = "Saldo insuficiente para completar la compra.";
+	    }
+
+	    // Animación al confirmar
+	    btnConfirmar.addEventListener("click", function(e) {
+
+	        if (btnConfirmar.disabled) return;
+
+	        e.preventDefault();
+
+	        const overlay = document.createElement("div");
+	        overlay.className = "compra-exitosa";
+
+	        overlay.innerHTML = `
+	            <div class="compra-box">
+	                <h2>✔ Compra realizada</h2>
+	                <p>Gracias por tu compra en VirtualHub</p>
+	            </div>
+	        `;
+
+	        document.body.appendChild(overlay);
+
+	        setTimeout(() => {
+	            e.target.closest("form").submit();
+	        }, 1500);
+
+	    });
+
+	});
 </script>
 </body>
 </html>
