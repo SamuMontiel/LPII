@@ -3,20 +3,25 @@ package com.virtualhub.controller;
 import com.virtualhub.model.Usuario;
 import com.virtualhub.model.UsuarioJuego;
 import com.virtualhub.model.UsuarioLogro;
+import com.virtualhub.dto.PerfilDTO;
+import com.virtualhub.model.Amigo;
 import com.virtualhub.service.AmigoService;
 import com.virtualhub.service.LogroService;
-import com.virtualhub.service.NotificationService; // ✅ IMPORTAR
+import com.virtualhub.service.NotificationService;
 import com.virtualhub.service.UsuarioJuegoService;
 import com.virtualhub.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 
 @Controller
@@ -28,53 +33,38 @@ public class PerfilController {
     private final UsuarioJuegoService usuarioJuegoService;
     private final LogroService logroService;
     private final AmigoService amigoService;
-    private final NotificationService notificationService; // ✅ AGREGADO
+    private final NotificationService notificationService;
 
     @GetMapping
     public String perfil(Model model, Authentication authentication) {
 
         if (authentication == null) return "redirect:/login";
         
-        // Obtener usuario
         Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
         
         // Obtener amigos
         List<Usuario> amigos = amigoService.obtenerAmigos(usuario);
         
-        // Obtener biblioteca
+        // Obtener solicitudes de amistad recibidas
+        List<Amigo> solicitudesRecibidas = amigoService.obtenerSolicitudesRecibidas(usuario);
+        
         List<UsuarioJuego> biblioteca = usuarioJuegoService.obtenerBiblioteca(usuario);
         
-        // DEBUG
-        System.out.println("=== VALORES REALES DE BIBLIOTECA ===");
-        for (UsuarioJuego uj : biblioteca) {
-            System.out.println("Juego: " + uj.getJuego().getTitulo() + 
-                               " - Horas: " + uj.getHorasJugadas() +
-                               " - Precio: " + uj.getJuego().getPrecio());
-        }
-        
-        // Juego más jugado
         UsuarioJuego juegoMasJugado = biblioteca.stream()
                 .filter(uj -> uj.getHorasJugadas() != null)
                 .max(Comparator.comparingDouble(UsuarioJuego::getHorasJugadas))
                 .orElse(null);
         
         // Calcular horas totales
-        double totalHoras = 0;
-        for (UsuarioJuego uj : biblioteca) {
-            if (uj.getHorasJugadas() != null) {
-                totalHoras += uj.getHorasJugadas();
-            }
-        }
-        System.out.println("Total horas calculadas: " + totalHoras);
+        double totalHoras = biblioteca.stream()
+                .mapToDouble(uj -> uj.getHorasJugadas() != null ? uj.getHorasJugadas() : 0)
+                .sum();
         
         // Calcular valor biblioteca
-        double valorBiblioteca = 0;
-        for (UsuarioJuego uj : biblioteca) {
-            if (uj.getJuego() != null && uj.getJuego().getPrecio() != null) {
-                valorBiblioteca += uj.getJuego().getPrecio();
-            }
-        }
-        System.out.println("Valor biblioteca calculado: " + valorBiblioteca);
+        double valorBiblioteca = biblioteca.stream()
+                .mapToDouble(uj -> uj.getJuego() != null && uj.getJuego().getPrecio() != null 
+                        ? uj.getJuego().getPrecio() : 0)
+                .sum();
         
         // Calcular nivel
         int nivel = totalHoras > 0 ? (int) (totalHoras / 10) + 1 : 1;
@@ -102,7 +92,7 @@ public class PerfilController {
             logrosCompletados = 0;
         }
         
-        // ✅ NUEVO: Obtener notificaciones no leídas
+        // Obtener notificaciones no leídas
         long notificacionesNoLeidas = 0;
         try {
             notificacionesNoLeidas = notificationService.getNotificacionesNoLeidas(usuario).size();
@@ -110,7 +100,6 @@ public class PerfilController {
             System.out.println("Error al obtener notificaciones: " + e.getMessage());
         }
         
-        // Agregar todo al modelo
         model.addAttribute("usuario", usuario);
         model.addAttribute("biblioteca", biblioteca);
         model.addAttribute("juegoMasJugado", juegoMasJugado);
@@ -121,9 +110,26 @@ public class PerfilController {
         model.addAttribute("logrosRecientes", logrosRecientes);
         model.addAttribute("logrosCompletados", logrosCompletados);
         model.addAttribute("amigos", amigos);
-        model.addAttribute("notificacionesNoLeidas", notificacionesNoLeidas); // ✅ AGREGADO
+        model.addAttribute("solicitudesRecibidas", solicitudesRecibidas);
+        model.addAttribute("notificacionesNoLeidas", notificacionesNoLeidas);
         model.addAttribute("activePage", "perfil");
 
         return "perfil";
+    }
+    @PostMapping("/actualizar")
+    @ResponseBody
+    public ResponseEntity<?> actualizarPerfil(@RequestBody PerfilDTO perfilDTO, Authentication authentication) {
+        try {
+            Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
+            Usuario actualizado = usuarioService.actualizarPerfil(usuario.getId(), perfilDTO);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("mensaje", "Perfil actualizado correctamente");
+            response.put("usuario", actualizado);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 }

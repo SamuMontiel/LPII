@@ -29,6 +29,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
     
+    
     @Transactional
     public Usuario actualizarPerfil(Long usuarioId, PerfilDTO perfilDTO) {
         Usuario usuario = buscarPorId(usuarioId);

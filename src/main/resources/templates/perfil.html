@@ -11,51 +11,54 @@
 </head>
 <body class="profile-page">
 
-	<!-- NAVBAR - con notificaciones -->
-	<header class="steam-navbar">
-	    <div class="navbar-container">
-	        <div class="navbar-left">
-	            <a th:href="@{/home}" class="navbar-logo">🎮 <span>VIRTUALHUB</span></a>
-	            <nav class="navbar-tabs">
-	                <a th:href="@{/home}" th:classappend="${activePage == 'home'} ? 'active' : ''" class="tab-item">TIENDA</a>
-	                <a th:href="@{/biblioteca}" th:classappend="${activePage == 'biblioteca'} ? 'active' : ''" class="tab-item">BIBLIOTECA</a>
-	                <a th:href="@{/comunidad}" th:classappend="${activePage == 'comunidad'} ? 'active' : ''" class="tab-item">COMUNIDAD</a>
-	                <a th:href="@{/perfil}" th:classappend="${activePage == 'perfil'} ? 'active' : ''" class="tab-item">PERFIL</a>
-	            </nav>
-	        </div>
-	        <div class="navbar-right">
-	            <!-- ✅ NUEVO: Sistema de notificaciones -->
-	            <div class="notifications-dropdown">
-	                <button class="btn-notifications" onclick="toggleNotifications()">
-	                    <i class="fas fa-bell"></i>
-	                    <span class="notification-badge" th:if="${notificacionesNoLeidas > 0}" 
-	                          th:text="${notificacionesNoLeidas}"></span>
-	                </button>
-	                <div class="notifications-panel" id="notificationsPanel">
-	                    <div class="notifications-header">
-	                        <h4>Notificaciones</h4>
-	                        <button onclick="marcarTodasLeidas()" class="btn-mark-read">
-	                            <i class="fas fa-check-double"></i>
-	                        </button>
-	                    </div>
-	                    <div class="notifications-list" id="notificationsList">
-	                        <!-- Las notificaciones se cargarán aquí -->
-	                    </div>
-	                    <div class="notifications-footer">
-	                        <a href="#" onclick="verTodasNotificaciones(event)">Ver todas</a>
-	                    </div>
-	                </div>
-	            </div>
-	            
-	            <div class="saldo-pill">
-	                <i class="fas fa-wallet"></i> S/ <span th:text="${#numbers.formatDecimal(usuario.saldo,1,2)}"></span>
-	            </div>
-	            <form th:action="@{/logout}" method="post" class="logout-form">
-	                <button type="submit" class="logout-btn">Cerrar sesión</button>
-	            </form>
-	        </div>
-	    </div>
-	</header>
+    <!-- NAVBAR CON NOTIFICACIONES -->
+    <header class="steam-navbar">
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <a th:href="@{/home}" class="navbar-logo">🎮 <span>VIRTUALHUB</span></a>
+                <nav class="navbar-tabs">
+                    <a th:href="@{/home}" th:classappend="${activePage == 'home'} ? 'active' : ''" class="tab-item">TIENDA</a>
+                    <a th:href="@{/biblioteca}" th:classappend="${activePage == 'biblioteca'} ? 'active' : ''" class="tab-item">BIBLIOTECA</a>
+                    <a th:href="@{/comunidad}" th:classappend="${activePage == 'comunidad'} ? 'active' : ''" class="tab-item">COMUNIDAD</a>
+                    <a th:href="@{/perfil}" th:classappend="${activePage == 'perfil'} ? 'active' : ''" class="tab-item">PERFIL</a>
+                </nav>
+            </div>
+            <div class="navbar-right">
+                <!-- NOTIFICACIONES -->
+                <div class="notifications-dropdown">
+                    <button class="btn-notifications" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" th:if="${notificacionesNoLeidas > 0}" 
+                              th:text="${notificacionesNoLeidas}"></span>
+                    </button>
+                    <div class="notifications-panel" id="notificationsPanel">
+                        <div class="notifications-header">
+                            <h4>Notificaciones</h4>
+                            <button onclick="marcarTodasLeidas()" class="btn-mark-read">
+                                <i class="fas fa-check-double"></i>
+                            </button>
+                        </div>
+                        <div class="notifications-list" id="notificationsList">
+                            <div class="no-notifications">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>No tienes notificaciones</p>
+                            </div>
+                        </div>
+                        <div class="notifications-footer">
+                            <a href="#" onclick="verTodasNotificaciones(event)">Ver todas</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="saldo-pill">
+                    <i class="fas fa-wallet"></i> S/ <span th:text="${#numbers.formatDecimal(usuario.saldo,1,2)}"></span>
+                </div>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="logout-btn">Cerrar sesión</button>
+                </form>
+            </div>
+        </div>
+    </header>
 
     <!-- HERO BANNER -->
     <div class="steam-profile-hero" 
@@ -190,55 +193,90 @@
                     </div>
                 </div>
                 
-                <!-- SECCIÓN DE AMIGOS ACTUALIZADA -->
-                <div class="sidebar-card friends-card">
+                <!-- SOLICITUDES DE AMISTAD PENDIENTES -->
+                <div class="sidebar-card friend-requests-card" th:if="${solicitudesRecibidas != null and !solicitudesRecibidas.isEmpty()}">
                     <h5>
-                        Amigos 
-                        <span class="friends-count" th:text="'(' + ${amigos != null ? amigos.size() : 0} + ')'"></span>
+                        Solicitudes de amistad
+                        <span class="pending-badge" th:text="${solicitudesRecibidas.size()}"></span>
                     </h5>
+                    <div class="friend-requests-list">
+                        <div th:each="solicitud : ${solicitudesRecibidas}" class="friend-request-item">
+                            <img th:src="${solicitud.usuario.avatarUrl != null ? solicitud.usuario.avatarUrl : 'https://i.pravatar.cc/150?u=' + solicitud.usuario.id}" 
+                                 class="request-avatar">
+                            <div class="request-info">
+                                <span class="request-name" th:text="${solicitud.usuario.nombre}"></span>
+                                <span class="request-email" th:text="${solicitud.usuario.email}"></span>
+                            </div>
+                            <div class="request-actions">
+                                <button class="btn-accept" th:onclick="'aceptarSolicitud(' + ${solicitud.id} + ')'">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn-decline" th:onclick="'rechazarSolicitud(' + ${solicitud.id} + ')'">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AMIGOS - VERSIÓN MEJORADA COMO STEAM -->
+                <div class="sidebar-card friends-card">
+                    <div class="friends-header">
+                        <h5>
+                            <i class="fas fa-user-friends"></i> Amigos 
+                            <span class="friends-count" th:text="'(' + ${amigos != null ? amigos.size() : 0} + ')'"></span>
+                        </h5>
+                        <a href="#" class="view-all-link" onclick="openFriendsModal(event)">Ver todos →</a>
+                    </div>
                     
                     <!-- Si no hay amigos -->
                     <div th:if="${amigos == null or amigos.isEmpty()}" class="no-friends">
-                        <p>No tienes amigos aún. ¡Conoce gente en la comunidad!</p>
+                        <div class="no-friends-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <p>No tienes amigos aún</p>
+                        <p class="no-friends-sub">¡Conoce gente en la comunidad!</p>
                         <div class="friend-search-box">
                             <input type="email" id="friendEmail" placeholder="Email del amigo..." class="form-control">
                             <button class="btn-add-friend-small" onclick="enviarSolicitud()">
-                                <i class="fas fa-user-plus"></i> Agregar
+                                <i class="fas fa-plus"></i> Agregar
                             </button>
                         </div>
-                        <a href="#" class="view-all-friends" onclick="openFriendsModal(event)">Buscar amigos →</a>
                     </div>
                     
-                    <!-- Si hay amigos -->
-                    <div th:if="${amigos != null and !amigos.isEmpty()}" class="friends-list">
-                        <div th:each="amigo : ${amigos}" class="friend-item">
-                            <div class="friend-avatar">
+                    <!-- Si hay amigos - VISTA TIPO STEAM -->
+                    <div th:if="${amigos != null and !amigos.isEmpty()}" class="friends-list-steam">
+                        <div th:each="amigo : ${amigos}" class="friend-item-steam">
+                            <div class="friend-avatar-container">
                                 <img th:src="${amigo.avatarUrl != null ? amigo.avatarUrl : 'https://i.pravatar.cc/150?u=' + amigo.id}" 
+                                     class="friend-avatar-steam" 
                                      alt="Avatar">
-                                <span class="status-dot online"></span>
+                                <span class="status-badge online"></span>
                             </div>
-                            <div class="friend-info">
-                                <span class="friend-name" th:text="${amigo.nombre}"></span>
-                                <span class="friend-status">En línea</span>
+                            <div class="friend-info-steam">
+                                <span class="friend-name-steam" th:text="${amigo.nombre}"></span>
+                                <span class="friend-status-steam">En línea</span>
                             </div>
-                        </div>
-                        
-                        <div class="friend-actions">
-                            <a href="#" class="view-all-friends" onclick="openFriendsModal(event)">
-                                Ver todos (<span th:text="${amigos.size()}"></span>) →
-                            </a>
+                            <div class="friend-actions-steam">
+                                <button class="btn-chat" th:onclick="'abrirChat(' + ${amigo.id} + ')'" title="Enviar mensaje">
+                                    <i class="fas fa-comment"></i>
+                                </button>
+                                <button class="btn-more" th:onclick="'opcionesAmigo(' + ${amigo.id} + ')'" title="Más opciones">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- CENTRO - ACTIVIDAD RECIENTE (se mantiene igual) -->
+            <!-- CENTRO - ACTIVIDAD RECIENTE -->
             <div class="activity-section">
                 <h3 class="section-title">Actividad Reciente</h3>
                 
                 <!-- Mensaje si no hay juegos -->
                 <div class="no-games" th:if="${biblioteca.isEmpty()}">
-                    <p>No tienes juegos en tu biblioteca. <a th:href="@{/home}">¡Ve a la tienda a comprar algunos!</a></p>
+                    <p>No tienes juegos en tu biblioteca. <a th:href="@{/home}">TIENDA</a></p>
                 </div>
                 
                 <!-- Actividad de Juegos -->
@@ -298,7 +336,7 @@
     </div>
 
     <footer class="footer">
-        <p>VirtualHub © 2026 • Hecho con ❤️ por Samuel</p>
+        <p>VirtualHub © 2026</p>
         <div class="footer-links">
             <a href="#">Acerca de</a>
             <a href="#">Términos</a>
@@ -307,261 +345,381 @@
         </div>
     </footer>
 
-    <script>
-        // Variables globales
-        let selectedColor = null;
-        
-        const screenshots = [];
+	<script>
+	    // Variables globales
+	    let selectedColor = null;
+	    let notificacionesInterval = null;
+	    
+	    // FUNCIONES PARA MODAL DE EDICIÓN
+	    function openEditModal() {
+	        document.getElementById('editProfileModal').style.display = 'flex';
+	        selectedColor = null;
+	    }
 
-        // FUNCIONES PARA MODAL DE EDICIÓN
-        function openEditModal() {
-            document.getElementById('editProfileModal').style.display = 'flex';
-            selectedColor = null;
-        }
+	    function closeModal(modalId) {
+	        document.getElementById(modalId).style.display = 'none';
+	    }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
+	    function selectColor(element, color) {
+	        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+	        element.classList.add('selected');
+	        document.getElementById('bannerColor').value = color;
+	        selectedColor = color;
+	    }
 
-        function selectColor(element, color) {
-            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
-            element.classList.add('selected');
-            document.getElementById('bannerColor').value = color;
-            selectedColor = color;
-        }
+	    function saveProfile(event) {
+	        event.preventDefault();
+	        
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	        
+	        const formData = {
+	            nombre: document.getElementById('nombre').value,
+	            bio: document.getElementById('bio').value,
+	            avatarUrl: document.getElementById('avatarUrl').value,
+	            bannerColor: selectedColor || document.querySelector('.color-option.selected')?.style.background || '#1f2833'
+	        };
+	        
+	        const saveButton = event.target.querySelector('button[type="submit"]');
+	        const originalText = saveButton.textContent;
+	        saveButton.textContent = 'Guardando...';
+	        saveButton.disabled = true;
+	        
+	        const headers = {
+	            'Content-Type': 'application/json',
+	        };
+	        headers[header] = token;
+	        
+	        fetch('/perfil/actualizar', {
+	            method: 'POST',
+	            headers: headers,
+	            body: JSON.stringify(formData)
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            if (data.error) {
+	                showNotification('Error: ' + data.error, 'error');
+	            } else {
+	                showNotification('Perfil actualizado correctamente');
+	                closeModal('editProfileModal');
+	                setTimeout(() => location.reload(), 1500);
+	            }
+	        })
+	        .catch(error => {
+	            showNotification('Error al guardar los cambios', 'error');
+	        })
+	        .finally(() => {
+	            saveButton.textContent = originalText;
+	            saveButton.disabled = false;
+	        });
+	    }
 
-        function saveProfile(event) {
-            event.preventDefault();
-            
-            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-            
-            const formData = {
-                nombre: document.getElementById('nombre').value,
-                bio: document.getElementById('bio').value,
-                avatarUrl: document.getElementById('avatarUrl').value,
-                bannerColor: selectedColor || document.querySelector('.color-option.selected')?.style.background || '#1f2833'
-            };
-            
-            const saveButton = event.target.querySelector('button[type="submit"]');
-            const originalText = saveButton.textContent;
-            saveButton.textContent = 'Guardando...';
-            saveButton.disabled = true;
-            
-            const headers = {
-                'Content-Type': 'application/json',
-            };
-            headers[header] = token;
-            
-            fetch('/perfil/actualizar', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    showNotification('Error: ' + data.error, 'error');
-                } else {
-                    showNotification('Perfil actualizado correctamente');
-                    closeModal('editProfileModal');
-                    setTimeout(() => location.reload(), 1500);
-                }
-            })
-            .catch(error => {
-                showNotification('Error al guardar los cambios', 'error');
-            })
-            .finally(() => {
-                saveButton.textContent = originalText;
-                saveButton.disabled = false;
-            });
-        }
+	    // FUNCIÓN PARA NOTIFICACIONES
+	    function showNotification(message, type = 'success') {
+	        const notification = document.createElement('div');
+	        notification.className = 'notification ' + type;
+	        notification.innerHTML = `
+	            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+	            <span>${message}</span>
+	        `;
+	        document.body.appendChild(notification);
+	        
+	        setTimeout(() => notification.classList.add('show'), 100);
+	        setTimeout(() => {
+	            notification.classList.remove('show');
+	            setTimeout(() => notification.remove(), 300);
+	        }, 3000);
+	    }
 
-        function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = 'notification ' + type;
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                <span>${message}</span>
-            `;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => notification.classList.add('show'), 100);
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
+	    // FUNCIONES PARA NOTIFICACIONES DEL SISTEMA
+	    function toggleNotifications() {
+	        const panel = document.getElementById('notificationsPanel');
+	        panel.classList.toggle('show');
+	        
+	        if (panel.classList.contains('show')) {
+	            cargarNotificaciones();
+	        }
+	    }
 
-        function sendFriendRequest(button) {
-            if (!button.classList.contains('friend-request-sent')) {
-                button.innerHTML = '<i class="fas fa-clock"></i> Solicitud enviada';
-                button.classList.add('friend-request-sent');
-                button.disabled = true;
-                showNotification('Solicitud de amistad enviada');
-            }
-        }
-        
-        // ✅ NUEVA FUNCIÓN PARA ENVIAR SOLICITUD DE AMISTAD POR EMAIL
-        function enviarSolicitud() {
-            const email = document.getElementById('friendEmail').value;
-            if (!email) {
-                showNotification('Ingresa un email', 'error');
-                return;
-            }
-            
-            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-            
-            const headers = {
-                'Content-Type': 'application/json',
-            };
-            headers[header] = token;
-            
-            fetch('/amigos/solicitud', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({ email: email })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    showNotification('Error: ' + data.error, 'error');
-                } else {
-                    showNotification('Solicitud enviada a ' + email);
-                    document.getElementById('friendEmail').value = '';
-                }
-            })
-            .catch(error => {
-                showNotification('Error al enviar solicitud', 'error');
-            });
-        }
+	    function cargarNotificaciones() {
+	        fetch('/notificaciones/recientes')
+	            .then(response => response.json())
+	            .then(data => {
+	                const lista = document.getElementById('notificationsList');
+	                
+	                if (data.length === 0) {
+	                    lista.innerHTML = `
+	                        <div class="no-notifications">
+	                            <i class="fas fa-bell-slash"></i>
+	                            <p>No tienes notificaciones</p>
+	                        </div>
+	                    `;
+	                    return;
+	                }
+	                
+	                let html = '';
+	                data.forEach(notif => {
+	                    const icono = notif.tipo === 'LOGRO' ? '🏆' : 
+	                                 notif.tipo === 'AMIGO' ? '👥' : '🔔';
+	                    
+	                    html += `
+	                        <div class="notification-item ${notif.leida ? '' : 'unread'}" 
+	                             onclick="marcarLeida(${notif.id})">
+	                            <div class="notification-icon ${notif.tipo.toLowerCase()}">
+	                                ${icono}
+	                            </div>
+	                            <div class="notification-content">
+	                                <div class="notification-message">${notif.mensaje}</div>
+	                                <div class="notification-time">${notif.fecha}</div>
+	                            </div>
+	                        </div>
+	                    `;
+	                });
+	                
+	                lista.innerHTML = html;
+	            });
+	    }
 
-        function openFriendsModal(event) {
-            event.preventDefault();
-            showNotification('Funcionalidad en desarrollo', 'info');
-        }
+	    function marcarLeida(id) {
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	        
+	        const headers = {};
+	        headers[header] = token;
+	        
+	        fetch('/notificaciones/marcar/' + id, { 
+	            method: 'POST',
+	            headers: headers
+	        })
+	        .then(() => {
+	            cargarNotificaciones();
+	            actualizarContadorNotificaciones();
+	        });
+	    }
 
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
-		// FUNCIONES PARA NOTIFICACIONES
-		function toggleNotifications() {
-		    const panel = document.getElementById('notificationsPanel');
-		    panel.classList.toggle('show');
-		    
-		    if (panel.classList.contains('show')) {
-		        cargarNotificaciones();
-		    }
-		}
+	    function marcarTodasLeidas() {
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	        
+	        const headers = {};
+	        headers[header] = token;
+	        
+	        fetch('/notificaciones/marcar-todas', { 
+	            method: 'POST',
+	            headers: headers
+	        })
+	        .then(() => {
+	            cargarNotificaciones();
+	            actualizarContadorNotificaciones();
+	        });
+	    }
 
-		function cargarNotificaciones() {
-		    fetch('/notificaciones/recientes')
-		        .then(response => response.json())
-		        .then(data => {
-		            const lista = document.getElementById('notificationsList');
-		            
-		            if (data.length === 0) {
-		                lista.innerHTML = `
-		                    <div class="no-notifications">
-		                        <i class="fas fa-bell-slash"></i>
-		                        <p>No tienes notificaciones</p>
-		                    </div>
-		                `;
-		                return;
-		            }
-		            
-		            let html = '';
-		            data.forEach(notif => {
-		                const icono = notif.tipo === 'LOGRO' ? '🏆' : 
-		                             notif.tipo === 'AMIGO' ? '👥' : '🔔';
-		                
-		                html += `
-		                    <div class="notification-item ${notif.leida ? '' : 'unread'}" 
-		                         onclick="marcarLeida(${notif.id})">
-		                        <div class="notification-icon ${notif.tipo.toLowerCase()}">
-		                            ${icono}
-		                        </div>
-		                        <div class="notification-content">
-		                            <div class="notification-message">${notif.mensaje}</div>
-		                            <div class="notification-time">${notif.fecha}</div>
-		                        </div>
-		                    </div>
-		                `;
-		            });
-		            
-		            lista.innerHTML = html;
-		        });
-		}
+	    function actualizarContadorNotificaciones() {
+	        fetch('/notificaciones/no-leidas')
+	            .then(response => response.json())
+	            .then(data => {
+	                const badge = document.querySelector('.notification-badge');
+	                if (data.cantidad > 0) {
+	                    if (!badge) {
+	                        const btn = document.querySelector('.btn-notifications');
+	                        const newBadge = document.createElement('span');
+	                        newBadge.className = 'notification-badge';
+	                        newBadge.textContent = data.cantidad;
+	                        btn.appendChild(newBadge);
+	                    } else {
+	                        badge.textContent = data.cantidad;
+	                    }
+	                } else if (badge) {
+	                    badge.remove();
+	                }
+	            });
+	    }
 
-		function marcarLeida(id) {
-		    fetch('/notificaciones/marcar/' + id, { method: 'POST' })
-		        .then(() => {
-		            cargarNotificaciones();
-		            actualizarContador();
-		        });
-		}
+	    function verTodasNotificaciones(event) {
+	        event.preventDefault();
+	        showNotification('Funcionalidad en desarrollo', 'info');
+	    }
 
-		function marcarTodasLeidas() {
-		    fetch('/notificaciones/marcar-todas', { method: 'POST' })
-		        .then(() => {
-		            cargarNotificaciones();
-		            actualizarContador();
-		        });
-		}
+	    // ✅ FUNCIÓN CORREGIDA PARA ENVIAR SOLICITUD (DESDE EL BOTÓN AÑADIR AMIGO)
+	    function sendFriendRequest(button) {
+	        const email = prompt("📧 Ingresa el email del amigo que quieres agregar:");
+	        if (email && email.trim() !== '') {
+	            // Buscar el campo de email en el sidebar
+	            const emailInput = document.getElementById('friendEmail');
+	            if (emailInput) {
+	                emailInput.value = email.trim();
+	                // Enfocar y luego enviar
+	                emailInput.focus();
+	                enviarSolicitud();
+	            } else {
+	                // Si no hay campo, enviar directamente
+	                enviarSolicitudConEmail(email.trim());
+	            }
+	        }
+	    }
 
-		function actualizarContador() {
-		    fetch('/notificaciones/no-leidas')
-		        .then(response => response.json())
-		        .then(data => {
-		            const badge = document.querySelector('.notification-badge');
-		            if (data.cantidad > 0) {
-		                if (!badge) {
-		                    const btn = document.querySelector('.btn-notifications');
-		                    const newBadge = document.createElement('span');
-		                    newBadge.className = 'notification-badge';
-		                    newBadge.textContent = data.cantidad;
-		                    btn.appendChild(newBadge);
-		                } else {
-		                    badge.textContent = data.cantidad;
-		                }
-		            } else if (badge) {
-		                badge.remove();
-		            }
-		        });
-		}
+	    // ✅ FUNCIÓN CORREGIDA PARA ENVIAR SOLICITUD (DESDE EL BOTÓN AGREGAR)
+	    function enviarSolicitud() {
+	        const emailInput = document.getElementById('friendEmail');
+	        if (!emailInput) {
+	            showNotification('Error: Campo de email no encontrado', 'error');
+	            return;
+	        }
+	        
+	        const email = emailInput.value.trim();
+	        if (!email) {
+	            showNotification('❌ Ingresa un email válido', 'error');
+	            return;
+	        }
+	        
+	        enviarSolicitudConEmail(email);
+	    }
 
-		// Cerrar panel al hacer clic fuera
-		document.addEventListener('click', function(event) {
-		    const panel = document.getElementById('notificationsPanel');
-		    const btn = document.querySelector('.btn-notifications');
-		    
-		    if (!btn.contains(event.target) && !panel.contains(event.target)) {
-		        panel.classList.remove('show');
-		    }
-		});
+	    // ✅ FUNCIÓN AUXILIAR PARA ENVIAR LA PETICIÓN
+	    function enviarSolicitudConEmail(email) {
+	        // Validar formato de email básico
+	        if (!email.includes('@') || !email.includes('.')) {
+	            showNotification('❌ Formato de email inválido', 'error');
+	            return;
+	        }
+	        
+	        const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+	        
+	        if (!token || !header) {
+	            showNotification('Error de seguridad: recarga la página', 'error');
+	            return;
+	        }
+	        
+	        // Mostrar loading en el botón (si existe)
+	        const btn = document.querySelector('.btn-add-friend-small');
+	        let originalText = '';
+	        if (btn) {
+	            originalText = btn.innerHTML;
+	            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+	            btn.disabled = true;
+	        }
+	        
+	        const headers = {
+	            'Content-Type': 'application/json',
+	        };
+	        headers[header] = token;
+	        
+	        fetch('/amigos/solicitud', {
+	            method: 'POST',
+	            headers: headers,
+	            body: JSON.stringify({ email: email })
+	        })
+	        .then(response => {
+	            if (!response.ok) {
+	                throw new Error('Error del servidor: ' + response.status);
+	            }
+	            return response.json();
+	        })
+	        .then(data => {
+	            if (data.error) {
+	                showNotification('❌ ' + data.error, 'error');
+	            } else {
+	                showNotification('✅ ' + data.mensaje, 'success');
+	                const emailInput = document.getElementById('friendEmail');
+	                if (emailInput) emailInput.value = ''; // Limpiar campo
+	            }
+	        })
+	        .catch(error => {
+	            console.error('Error:', error);
+	            showNotification('❌ Error al conectar con el servidor', 'error');
+	        })
+	        .finally(() => {
+	            if (btn) {
+	                btn.innerHTML = originalText;
+	                btn.disabled = false;
+	            }
+	        });
+	    }
 
-		// Actualizar contador cada 30 segundos
-		setInterval(actualizarContador, 30000);
-		
-		
-		document.addEventListener("DOMContentLoaded", function() {
+	    // FUNCIONES PARA SOLICITUDES
+	    function aceptarSolicitud(id) {
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	        
+	        const headers = {};
+	        headers[header] = token;
+	        
+	        fetch('/amigos/solicitudes/' + id + '/aceptar', {
+	            method: 'POST',
+	            headers: headers
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            if (data.error) {
+	                showNotification('Error: ' + data.error, 'error');
+	            } else {
+	                showNotification('✅ ¡Ahora son amigos!', 'success');
+	                setTimeout(() => location.reload(), 1500);
+	            }
+	        })
+	        .catch(error => {
+	            showNotification('Error al aceptar solicitud', 'error');
+	        });
+	    }
 
-		    const hero = document.querySelector(".steam-profile-hero");
+	    function rechazarSolicitud(id) {
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	        
+	        const headers = {};
+	        headers[header] = token;
+	        
+	        fetch('/amigos/solicitudes/' + id + '/rechazar', {
+	            method: 'POST',
+	            headers: headers
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            if (data.error) {
+	                showNotification('Error: ' + data.error, 'error');
+	            } else {
+	                showNotification('Solicitud rechazada', 'info');
+	                setTimeout(() => location.reload(), 1500);
+	            }
+	        })
+	        .catch(error => {
+	            showNotification('Error al rechazar solicitud', 'error');
+	        });
+	    }
 
-		    hero.addEventListener("mousemove", (e) => {
-		        const rect = hero.getBoundingClientRect();
-		        const x = e.clientX - rect.left;
-		        const y = e.clientY - rect.top;
+	    function openFriendsModal(event) {
+	        event.preventDefault();
+	        showNotification('Funcionalidad en desarrollo', 'info');
+	    }
 
-		        hero.style.setProperty('--mouse-x', x + 'px');
-		        hero.style.setProperty('--mouse-y', y + 'px');
-		    });
+	    function abrirChat(amigoId) {
+	        showNotification('Chat en desarrollo', 'info');
+	    }
 
-		});
-    </script>
+	    function opcionesAmigo(amigoId) {
+	        showNotification('Funcionalidad en desarrollo', 'info');
+	    }
+
+	    // Event listeners
+	    document.addEventListener('click', function(event) {
+	        const panel = document.getElementById('notificationsPanel');
+	        const btn = document.querySelector('.btn-notifications');
+	        
+	        if (btn && panel && !btn.contains(event.target) && !panel.contains(event.target)) {
+	            panel.classList.remove('show');
+	        }
+	        
+	        if (event.target.classList.contains('modal')) {
+	            event.target.style.display = 'none';
+	        }
+	    });
+
+	    document.addEventListener('DOMContentLoaded', function() {
+	        actualizarContadorNotificaciones();
+	        notificacionesInterval = setInterval(actualizarContadorNotificaciones, 30000);
+	    });
+	</script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

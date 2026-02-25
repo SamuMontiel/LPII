@@ -1,7 +1,7 @@
-// particles.js - VirtualHub (fondo discreto)
+
 (function () {
-  const MAX_PARTICLES = 80;           // tope en pantallas grandes
-  const MIN_PARTICLES = 18;           // tope en pantallas pequeñas
+  const MAX_PARTICLES = 80;          
+  const MIN_PARTICLES = 18;          
   const PARTICLE_SIZE = { min: 0.6, max: 2.2 };
   const SPEED = { min: 0.15, max: 0.6 };
   const LINK_DISTANCE = 120;

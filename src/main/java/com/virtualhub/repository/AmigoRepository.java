@@ -24,7 +24,5 @@ public interface AmigoRepository extends JpaRepository<Amigo, Long> {
     @Query("SELECT COUNT(a) FROM Amigo a WHERE a.amigo = :usuario AND a.estado = 'PENDIENTE'")
     long countSolicitudesPendientes(@Param("usuario") Usuario usuario);
     
-    
     Optional<Amigo> findByUsuarioAndAmigo(Usuario usuario, Usuario amigo);
-    
 }

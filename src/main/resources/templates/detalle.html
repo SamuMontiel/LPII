@@ -32,14 +32,12 @@
            th:text="'$' + ${juego.precio}">
         </p>
 
-        <!-- Si ya lo tiene -->
         <div th:if="${usuario.juegos.contains(juego)}">
             <button class="btn-disabled" disabled>
                 Ya está en tu biblioteca
             </button>
         </div>
 
-        <!-- Si no lo tiene -->
         <div th:if="${!usuario.juegos.contains(juego)}">
             <form th:action="@{/comprar/{id}(id=${juego.id})}" method="post">
                 <button class="btn-comprar">

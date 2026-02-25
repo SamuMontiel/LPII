@@ -24,7 +24,7 @@ public class Amigo {
     @JoinColumn(name = "amigo_id", nullable = false)
     private Usuario amigo;
     
-    private String estado; // PENDIENTE, ACEPTADO, RECHAZADO
+    private String estado; 
     
     private LocalDateTime fechaSolicitud;
     

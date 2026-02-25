@@ -4,311 +4,614 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca - VirtualHub</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <meta name="_csrf" th:content="${_csrf.token}" />
+    <link rel="stylesheet" th:href="@{/css/biblioteca.css}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
-<body class="steam-body">
-
-	
-	<header class="steam-navbar">
-	    <div class="navbar-inner">
-	        <!-- LOGO -->
-	        <a href="/home" class="navbar-logo">
-	            🎮 <span>VirtualHub</span>
-	        </a>
-
-	        <!-- PESTAÑAS -->
-	        <nav class="navbar-tabs">
-	            <a th:href="@{/home}" 
-	               th:classappend="${activePage == 'home'} ? 'active' : ''" 
-	               class="tab-item">TIENDA</a>
-	            
-	            <a th:href="@{/biblioteca}" 
-	               th:classappend="${activePage == 'biblioteca'} ? 'active' : ''" 
-	               class="tab-item">BIBLIOTECA</a>
-	            
-	            <a th:href="@{/comunidad}" 
-	               th:classappend="${activePage == 'comunidad'} ? 'active' : ''" 
-	               class="tab-item">COMUNIDAD</a>
-	        </nav>
-
-	        <!-- ZONA DERECHA - NOMBRE EN MAYÚSCULAS + ENLACE A PERFIL -->
-	        <div class="navbar-right">
-	            <div class="saldo-pill">
-	                <i class="fas fa-wallet"></i>
-	                S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
-	            </div>
-	            
-	            <!-- 🔥 NOMBRE EN MAYÚSCULAS Y CLICKABLE -->
-	            <a th:href="@{/perfil}" 
-	               class="username-link"
-	               th:text="${#strings.toUpperCase(usuario.nombre)}"></a>
-	            
-	            <form th:action="@{/logout}" method="post" style="display:inline;">
-	                <button type="submit" class="logout-btn">Cerrar sesión</button>
-	            </form>
-	        </div>
-	    </div>
-	</header>
-
-
-<div class="library-container">
-
-    <!-- SIDEBAR (con protección null-safe) -->
-    <div class="library-sidebar">
-        <div class="sidebar-header">
-            <select class="library-filter">
-                <option>Juegos</option>
-                <option>Instalados</option>
-                <option>Favoritos</option>
-            </select>
-            <div class="sidebar-icons">
-                <span>⏰</span>
-                <span>⚙</span>
+<body class="biblioteca-page">
+    <header class="steam-navbar">
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <a th:href="@{/home}" class="navbar-logo">🎮 <span>VIRTUALHUB</span></a>
+                <nav class="navbar-tabs">
+                    <a th:href="@{/home}" th:classappend="${activePage == 'home'} ? 'active' : ''" class="tab-item">TIENDA</a>
+                    <a th:href="@{/biblioteca}" th:classappend="${activePage == 'biblioteca'} ? 'active' : ''" class="tab-item active">BIBLIOTECA</a>
+                    <a th:href="@{/comunidad}" th:classappend="${activePage == 'comunidad'} ? 'active' : ''" class="tab-item">COMUNIDAD</a>
+                    <a th:href="@{/perfil}" th:classappend="${activePage == 'perfil'} ? 'active' : ''" class="tab-item">PERFIL</a>
+                </nav>
             </div>
-        </div>
-
-        <div class="sidebar-search">
-            <input type="text" placeholder="Buscar en biblioteca...">
-        </div>
-
-        <div class="game-list">
-            <div th:each="uj,iter : ${biblioteca}" th:if="${uj != null and uj.juego != null}">
-                <div class="game-item"
-                     th:classappend="${iter.index == 0} ? ' active' : ''"
-                     th:onclick="'mostrarJuego(' + ${uj.juego.id} + ', this)'">
-
-                    <div class="sidebar-game-content">
-                        <img th:if="${uj.juego.logoUrl != null}" 
-                             th:src="@{${uj.juego.logoUrl}}" 
-                             class="sidebar-logo" onerror="this.style.display='none'">
-                        <span class="sidebar-title" th:text="${uj.juego.titulo}"></span>
-                    </div>
-
-                    <div class="sidebar-right">
-                        <span class="favorite-star">☆</span>
-                        <span th:if="${uj.jugando}" class="playing-dot">●</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN (tu código original intacto, solo con null-safe extra) -->
-    <div class="library-main">
-        <div class="dynamic-bg"></div>
-
-        <div th:each="uj,iter : ${biblioteca}" th:if="${uj != null and uj.juego != null}"
-             th:id="'panel-' + ${uj.juego.id}"
-             th:class="'game-panel ' + (${iter.index == 0} ? 'visible' : '')">
-
-            <!-- BANNER -->
-            <div class="game-banner" th:if="${uj.juego.bannerUrl != null}"
-                 th:style="'background-image:url(' + ${uj.juego.bannerUrl} + ')'">
-                <div class="banner-overlay"></div>
-                <div class="banner-content">
-                    <div class="banner-left">
-                        <button class="btn-install stop" th:if="${uj.jugando}" 
-                                th:attr="data-id=${uj.juego.id}" onclick="detenerJuego(this)">
-                            DETENER
-                        </button>
-
-                        <div th:if="${!uj.jugando}">
-                            <div class="install-container">
-                                <button class="btn-install install-btn" onclick="simularInstalacion(this)">
-                                    INSTALAR
-                                </button>
-                                <div class="install-progress hidden">
-                                    <div class="progress-bar"></div>
-                                    <span class="progress-text">0%</span>
-                                </div>
-                            </div>
-                            <button class="btn-install play-btn hidden" 
-                                    th:attr="data-id=${uj.juego.id}" onclick="iniciarJuego(this)">
-                                JUGAR
+            <div class="navbar-right">
+                <div class="notifications-dropdown">
+                    <button class="btn-notifications" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" th:if="${notificacionesNoLeidas > 0}" 
+                              th:text="${notificacionesNoLeidas}"></span>
+                    </button>
+                    <div class="notifications-panel" id="notificationsPanel">
+                        <div class="notifications-header">
+                            <h4>Notificaciones</h4>
+                            <button onclick="marcarTodasLeidas()" class="btn-mark-read">
+                                <i class="fas fa-check-double"></i>
                             </button>
                         </div>
-                    </div>
-
-                    <div class="banner-stats">
-                        <div th:if="${uj.ultimaSesion != null}">
-                            <span class="stat-title">ÚLTIMA SESIÓN</span>
-                            <span th:text="${#temporals.format(uj.ultimaSesion,'dd MMM')}"></span>
+                        <div class="notifications-list" id="notificationsList">
+                            <div class="no-notifications">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>No tienes notificaciones</p>
+                            </div>
                         </div>
-                        <div>
-                            <span class="stat-title">TIEMPO DE JUEGO</span>
-                            <span th:text="${#numbers.formatDecimal(uj.horasJugadas,1,1)} + ' horas'"></span>
+                        <div class="notifications-footer">
+                            <a href="#" onclick="verTodasNotificaciones(event)">Ver todas</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="saldo-pill">
+                    <i class="fas fa-wallet"></i> S/ <span th:text="${#numbers.formatDecimal(usuario.saldo, 1, 2)}"></span>
+                </div>
+
+                <a th:href="@{/perfil}" class="username-link" th:text="${#strings.toUpperCase(usuario.nombre)}"></a>
+
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="logout-btn">Cerrar sesión</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <div class="library-container">
+        <div class="library-sidebar">
+            <div class="sidebar-header">
+                <select class="library-filter">
+                    <option>Todos los juegos</option>
+                    <option>Instalados</option>
+                    <option>Favoritos</option>
+                    <option>Recientes</option>
+                </select>
+                <div class="sidebar-icons">
+                    <span><i class="fas fa-clock"></i></span>
+                    <span><i class="fas fa-cog"></i></span>
+                </div>
+            </div>
+
+            <div class="sidebar-search">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Buscar en biblioteca..." id="searchInput">
+            </div>
+
+            <div class="game-list">
+                <div th:each="uj,iter : ${biblioteca}" th:if="${uj != null and uj.juego != null}">
+                    <div class="game-item"
+                         th:classappend="${iter.index == 0} ? ' active' : ''"
+                         th:onclick="'mostrarJuego(' + ${uj.juego.id} + ', this)'"
+                         th:data-id="${uj.juego.id}">
+
+                        <div class="sidebar-game-content">
+                            <img th:if="${uj.juego.logoUrl != null}" 
+                                 th:src="@{${uj.juego.logoUrl}}" 
+                                 class="sidebar-logo" onerror="this.style.display='none'">
+                            <span class="sidebar-title" th:text="${uj.juego.titulo}"></span>
+                        </div>
+
+                        <div class="sidebar-right">
+                            <span class="favorite-star">☆</span>
+                            <span th:if="${uj.jugando}" class="playing-dot" title="Jugando ahora">●</span>
                         </div>
                     </div>
                 </div>
             </div>
-			
-			<br><br><br><br><br>
+        </div>
 
-            <!-- DETALLES (tu código original intacto) -->
-            <div class="game-details">
-                <div class="game-title-section">
-                    <img th:if="${uj.juego.logoUrl != null}" 
-                         th:src="@{${uj.juego.logoUrl}}" 
-                         class="game-logo-left" onerror="this.style.display='none'">
-                    <h2 th:text="${uj.juego.titulo}"></h2>
-                </div>
-                <p th:text="${uj.juego.descripcion}"></p>
+        <div class="library-main">
+            <div class="dynamic-bg"></div>
 
-                <div class="live-status" th:if="${uj.jugando}">
-                    🟢 Jugando ahora
-                    <span class="timer" th:data-inicio="${uj.horaInicio}">00:00</span>
-                </div>
+            <div th:each="uj,iter : ${biblioteca}" th:if="${uj != null and uj.juego != null}"
+                 th:id="'panel-' + ${uj.juego.id}"
+                 th:class="'game-panel ' + (${iter.index == 0} ? 'visible' : '')">
 
-                <div class="trailer-section" th:if="${uj.juego.trailerUrl != null and uj.juego.trailerUrl != ''}">
-                    <h3>Trailer</h3>
-                    <div class="trailer-container">
-                        <iframe class="game-trailer" th:data-src="${uj.juego.trailerUrl}" 
-                                allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div class="game-banner" th:if="${uj.juego.bannerUrl != null}"
+                     th:style="'background-image:url(' + ${uj.juego.bannerUrl} + ')'">
+                    <div class="banner-overlay"></div>
+                    <div class="banner-content">
+						<div class="banner-left">
+
+						    <button class="btn-install stop" th:if="${uj.jugando}" 
+						            th:attr="data-id=${uj.juego.id}" onclick="detenerJuego(this)">
+						        <i class="fas fa-stop"></i> DETENER
+						    </button>
+
+
+						    <div th:if="${!uj.jugando}" class="game-actions">
+						 
+						        <div th:if="${uj.horasJugadas != null and uj.horasJugadas > 0}">
+						            <button class="btn-install play-btn" 
+						                    th:attr="data-id=${uj.juego.id}" onclick="iniciarJuego(this)">
+						                <i class="fas fa-play"></i> JUGAR
+						            </button>
+						        </div>
+						        
+				
+						        <div th:if="${uj.horasJugadas == null or uj.horasJugadas == 0}" class="install-container">
+						            <button class="btn-install install-btn" onclick="simularInstalacion(this)">
+						                <i class="fas fa-download"></i> INSTALAR
+						            </button>
+						            <div class="install-progress hidden">
+						                <div class="progress-bar"></div>
+						                <span class="progress-text">0%</span>
+						            </div>
+						            <!-- Botón JUGAR oculto inicialmente -->
+						            <button class="btn-install play-btn hidden" 
+						                    th:attr="data-id=${uj.juego.id}" onclick="iniciarJuego(this)">
+						                <i class="fas fa-play"></i> JUGAR
+						            </button>
+						        </div>
+						    </div>
+						</div>
+
+                        <div class="banner-stats">
+                            <div class="stat-item" th:if="${uj.ultimaSesion != null}">
+                                <span class="stat-title">ÚLTIMA SESIÓN</span>
+                                <span class="stat-value" th:text="${#temporals.format(uj.ultimaSesion,'dd MMM yyyy')}"></span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-title">TIEMPO DE JUEGO</span>
+                                <span class="stat-value" th:text="${#numbers.formatDecimal(uj.horasJugadas,1,1)} + ' horas'"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="screenshots" th:if="${uj.juego.screenshotBaseName != null}">
-                    <h3>Capturas</h3>
-                    <div class="screenshot-row">
-                        <img th:each="i : ${#numbers.sequence(1,5)}" 
-                             th:src="@{'/images/screenshots/' + ${uj.juego.screenshotBaseName} + '-' + ${i} + '.jpg'}"
-                             onerror="this.style.display='none'" 
-                             class="screenshot-thumb">
+                <div class="game-details">
+                    <div class="game-title-section">
+                        <img th:if="${uj.juego.logoUrl != null}" 
+                             th:src="@{${uj.juego.logoUrl}}" 
+                             class="game-logo-left" onerror="this.style.display='none'">
+                        <h2 th:text="${uj.juego.titulo}"></h2>
+                    </div>
+                    
+                    <p class="game-description" th:text="${uj.juego.descripcion}"></p>
+
+                    <div class="live-status" th:if="${uj.jugando}">
+                        <span class="live-indicator">🟢</span> 
+                        <span>Jugando ahora</span>
+                        <span class="timer" th:data-inicio="${uj.horaInicio}" th:data-id="${uj.juego.id}">00:00</span>
+                    </div>
+
+                    <div class="trailer-section" th:if="${uj.juego.trailerUrl != null and uj.juego.trailerUrl != ''}">
+                        <h3><i class="fas fa-film"></i> Tráiler</h3>
+                        <div class="trailer-container">
+                            <iframe class="game-trailer" th:data-src="${uj.juego.trailerUrl}" 
+                                    allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="screenshots" th:if="${uj.juego.screenshotBaseName != null}">
+                        <h3><i class="fas fa-camera"></i> Capturas</h3>
+                        <div class="screenshot-row">
+                            <img th:each="i : ${#numbers.sequence(1,5)}" 
+                                 th:src="@{'/images/screenshots/' + ${uj.juego.screenshotBaseName} + '-' + ${i} + '.jpg'}"
+                                 onerror="this.style.display='none'" 
+                                 class="screenshot-thumb"
+                                 onclick="abrirLightbox(this.src)">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- OVERLAY -->
-<div class="launch-overlay" id="launchOverlay">
-    <div class="launch-box">
-        <h2>Lanzando juego...</h2>
-        <div class="launch-spinner"></div>
+    
+    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
     </div>
-</div>
+    
+    <div class="launch-overlay" id="launchOverlay">
+        <div class="launch-box">
+            <h2>Lanzando juego...</h2>
+            <div class="launch-spinner"></div>
+        </div>
+    </div>
 
-<!-- TU JAVASCRIPT ORIGINAL (intacto al 100%) -->
-<script>
-/* ============================ CAMBIAR JUEGO ============================ */
-function mostrarJuego(id, element) {
-    detenerTodosLosTrailers();
-    document.querySelectorAll(".game-panel").forEach(p => p.classList.remove("visible"));
-    document.querySelectorAll(".game-item").forEach(i => i.classList.remove("active"));
-    const panel = document.getElementById("panel-" + id);
-    panel.classList.add("visible");
-    element.classList.add("active");
-    const banner = panel.querySelector(".game-banner");
-    if (banner) {
-        document.querySelector(".dynamic-bg").style.backgroundImage = banner.style.backgroundImage;
-    }
-    activarTrailer(panel);
-}
+    <script>
+        let notificacionesInterval = null;
 
-/* ============================ TRAILER ============================ */
-function activarTrailer(panel) {
-    const iframe = panel.querySelector(".game-trailer");
-    if (!iframe) return;
-    const url = iframe.dataset.src;
-    if (!url) return;
-    iframe.src = url + "?autoplay=1&mute=1";
-}
-function detenerTodosLosTrailers() {
-    document.querySelectorAll(".game-trailer").forEach(i => i.src = "");
-}
 
-/* ============================ JUGAR / DETENER / INSTALAR ============================ */
-function iniciarJuego(button) {
-    const overlay = document.getElementById("launchOverlay");
-    overlay.style.display = "flex";
-    setTimeout(() => {
-        const id = button.dataset.id;
-        const csrf = document.querySelector('meta[name="_csrf"]').content;
-        fetch("/jugar/" + id, {
-            method: "POST",
-            headers: { "X-CSRF-TOKEN": csrf }
-        }).then(() => location.reload());
-    }, 1000);
-}
+        function guardarJuegoActivo(juegoId) {
+            localStorage.setItem('juegoActivo', juegoId);
+        }
 
-function detenerJuego(button) {
-    const id = button.dataset.id;
-    const csrf = document.querySelector('meta[name="_csrf"]').content;
-    fetch("/cerrar-juego/" + id, {
-        method: "POST",
-        headers: { "X-CSRF-TOKEN": csrf }
-    }).then(() => location.reload());
-}
+        function obtenerJuegoActivo() {
+            return localStorage.getItem('juegoActivo');
+        }
 
-function simularInstalacion(button) {
-    const container = button.closest(".install-container");
-    const progressBox = container.querySelector(".install-progress");
-    const progressBar = progressBox.querySelector(".progress-bar");
-    const progressText = progressBox.querySelector(".progress-text");
-    const playBtn = container.parentElement.querySelector(".play-btn");
+        function mostrarJuego(id, element) {
+            detenerTodosLosTrailers();
+            document.querySelectorAll(".game-panel").forEach(p => p.classList.remove("visible"));
+            document.querySelectorAll(".game-item").forEach(i => i.classList.remove("active"));
+            
+            const panel = document.getElementById("panel-" + id);
+            panel.classList.add("visible");
+            element.classList.add("active");
+            
+            guardarJuegoActivo(id);
+            
+            const banner = panel.querySelector(".game-banner");
+            if (banner) {
+                document.querySelector(".dynamic-bg").style.backgroundImage = banner.style.backgroundImage;
+            }
+            activarTrailer(panel);
+        }
 
-    button.classList.add("hidden");
-    progressBox.classList.remove("hidden");
 
-    let progreso = 0;
-    const intervalo = setInterval(() => {
-        progreso += 10;
-        if (progreso >= 100) {
-            clearInterval(intervalo);
-            progressText.innerText = "Instalado ✔";
+        function activarTrailer(panel) {
+            const iframe = panel.querySelector(".game-trailer");
+            if (!iframe) return;
+            const url = iframe.dataset.src;
+            if (!url) return;
+            iframe.src = url + "?autoplay=1&mute=1";
+        }
+        
+        function detenerTodosLosTrailers() {
+            document.querySelectorAll(".game-trailer").forEach(i => i.src = "");
+        }
+
+
+        function iniciarTimers() {
+            document.querySelectorAll(".timer").forEach(timer => {
+                if (!timer.dataset.inicio) return;
+                
+                if (timer.intervalId) {
+                    clearInterval(timer.intervalId);
+                }
+                
+                const inicio = new Date(timer.dataset.inicio);
+                const juegoId = timer.dataset.id;
+                
+                if (juegoId) {
+                    localStorage.setItem('juegoInicio_' + juegoId, timer.dataset.inicio);
+                }
+                
+                function actualizarTimer() {
+                    const ahora = new Date();
+                    const diff = Math.floor((ahora - inicio) / 1000);
+                    
+                    if (diff < 0) return;
+                    
+                    let horas = Math.floor(diff / 3600);
+                    let min = Math.floor((diff % 3600) / 60);
+                    let sec = diff % 60;
+                    
+                    if (horas > 0) {
+                        timer.innerText = String(horas).padStart(2,'0') + ":" + 
+                                          String(min).padStart(2,'0') + ":" + 
+                                          String(sec).padStart(2,'0');
+                    } else {
+                        timer.innerText = String(min).padStart(2,'0') + ":" + 
+                                          String(sec).padStart(2,'0');
+                    }
+                }
+                
+                actualizarTimer();
+                timer.intervalId = setInterval(actualizarTimer, 1000);
+            });
+        }
+
+        function iniciarJuego(button) {
+            const overlay = document.getElementById("launchOverlay");
+            overlay.style.display = "flex";
+            
+            const juegoId = button.dataset.id;
+            const ahora = new Date().toISOString();
+            
+            guardarJuegoActivo(juegoId);
+            localStorage.setItem('juegoInicio_' + juegoId, ahora);
+            
+            const panel = document.getElementById("panel-" + juegoId);
+            const timer = panel?.querySelector(".timer");
+            const stopBtn = panel?.querySelector(".btn-install.stop");
+            const playBtn = panel?.querySelector(".play-btn");
+            const installContainer = panel?.querySelector(".install-container");
+            const liveStatus = panel?.querySelector(".live-status");
+            
+            if (timer) timer.dataset.inicio = ahora;
+            if (stopBtn) stopBtn.classList.remove('hidden');
+            if (playBtn) playBtn.classList.add('hidden');
+            if (installContainer) installContainer.classList.add('hidden');
+            if (liveStatus) liveStatus.classList.remove('hidden');
+            
             setTimeout(() => {
-                progressBox.classList.add("hidden");
-                playBtn.classList.remove("hidden");
-            }, 800);
+                const csrf = document.querySelector('meta[name="_csrf"]').content;
+                const header = document.querySelector('meta[name="_csrf_header"]').content;
+                
+                const headers = {};
+                headers[header] = csrf;
+                
+                fetch("/biblioteca/jugar/" + juegoId, {
+                    method: "POST",
+                    headers: headers
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Juego iniciado correctamente');
+                        location.reload();
+                    } else {
+                        console.error('Error al iniciar juego');
+                        overlay.style.display = "none";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    overlay.style.display = "none";
+                });
+            }, 1000);
         }
-        progressBar.style.width = progreso + "%";
-        progressText.innerText = progreso + "%";
-    }, 300);
-}
 
-/* ============================ INIT + TIMER ============================ */
-document.addEventListener("DOMContentLoaded", function() {
-    const firstPanel = document.querySelector(".game-panel.visible");
-    if (firstPanel) {
-        const banner = firstPanel.querySelector(".game-banner");
-        if (banner) {
-            document.querySelector(".dynamic-bg").style.backgroundImage = banner.style.backgroundImage;
+        function detenerJuego(button) {
+            const juegoId = button.dataset.id;
+            
+            guardarJuegoActivo(juegoId);
+            localStorage.removeItem('juegoInicio_' + juegoId);
+            
+            const csrf = document.querySelector('meta[name="_csrf"]').content;
+            const header = document.querySelector('meta[name="_csrf_header"]').content;
+            
+            const headers = {};
+            headers[header] = csrf;
+            
+            fetch("/biblioteca/cerrar-juego/" + juegoId, {
+                method: "POST",
+                headers: headers
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Juego detenido correctamente');
+                    location.reload();
+                } else {
+                    console.error('Error al detener juego');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
-        activarTrailer(firstPanel);
-    }
 
-    document.querySelectorAll(".timer").forEach(timer => {
-        if (!timer.dataset.inicio) return;
-        const inicio = new Date(timer.dataset.inicio);
-        setInterval(() => {
-            const ahora = new Date();
-            const diff = Math.floor((ahora - inicio) / 1000);
-            let min = Math.floor(diff / 60);
-            let sec = diff % 60;
-            timer.innerText = String(min).padStart(2,'0') + ":" + String(sec).padStart(2,'0');
-        }, 1000);
-    });
-});
+		function simularInstalacion(button) {
+		    const container = button.closest(".install-container");
+		    const progressBox = container.querySelector(".install-progress");
+		    const progressBar = progressBox.querySelector(".progress-bar");
+		    const progressText = progressBox.querySelector(".progress-text");
+		    const playBtn = container.querySelector(".play-btn"); 
+		    
+		    const juegoId = playBtn?.dataset.id;
+		    if (juegoId) {
+		        guardarJuegoActivo(juegoId);
+		    }
 
-/* Favoritos y buscador */
-document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("favorite-star")) {
-        e.stopPropagation();
-        e.target.classList.toggle("active");
-        e.target.textContent = e.target.classList.contains("active") ? "★" : "☆";
-    }
-});
-document.querySelector(".sidebar-search input").addEventListener("input", function() {
-    const value = this.value.toLowerCase();
-    document.querySelectorAll(".game-item").forEach(item => {
-        const title = item.querySelector(".sidebar-title").textContent.toLowerCase();
-        item.style.display = title.includes(value) ? "flex" : "none";
-    });
-});
-</script>
+		    button.classList.add("hidden");
+		    progressBox.classList.remove("hidden");
 
+		    let progreso = 0;
+		    const intervalo = setInterval(() => {
+		        progreso += 10;
+		        if (progreso >= 100) {
+		            clearInterval(intervalo);
+		            progressText.innerText = "Instalado ✔";
+		            setTimeout(() => {
+		                progressBox.classList.add("hidden");
+		                playBtn.classList.remove("hidden");
+		                if (juegoId) {
+		                    localStorage.setItem('juegoInstalado_' + juegoId, 'true');
+		                }
+		            }, 800);
+		        }
+		        progressBar.style.width = progreso + "%";
+		        progressText.innerText = progreso + "%";
+		    }, 300);
+		}
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            panel.classList.toggle('show');
+            if (panel.classList.contains('show')) {
+                cargarNotificaciones();
+            }
+        }
+
+        function cargarNotificaciones() {
+            fetch('/notificaciones/recientes')
+                .then(response => response.json())
+                .then(data => {
+                    const lista = document.getElementById('notificationsList');
+                    if (data.length === 0) {
+                        lista.innerHTML = `
+                            <div class="no-notifications">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>No tienes notificaciones</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    let html = '';
+                    data.forEach(notif => {
+                        const icono = notif.tipo === 'LOGRO' ? '🏆' : 
+                                     notif.tipo === 'AMIGO' ? '👥' : '🔔';
+                        
+                        html += `
+                            <div class="notification-item ${notif.leida ? '' : 'unread'}" 
+                                 onclick="marcarLeida(${notif.id})">
+                                <div class="notification-icon ${notif.tipo.toLowerCase()}">
+                                    ${icono}
+                                </div>
+                                <div class="notification-content">
+                                    <div class="notification-message">${notif.mensaje}</div>
+                                    <div class="notification-time">${notif.fecha}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    lista.innerHTML = html;
+                });
+        }
+
+        function marcarLeida(id) {
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            const headers = {};
+            headers[header] = token;
+            
+            fetch('/notificaciones/marcar/' + id, { method: 'POST', headers: headers })
+                .then(() => {
+                    cargarNotificaciones();
+                    actualizarContadorNotificaciones();
+                });
+        }
+
+        function marcarTodasLeidas() {
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            const headers = {};
+            headers[header] = token;
+            
+            fetch('/notificaciones/marcar-todas', { method: 'POST', headers: headers })
+                .then(() => {
+                    cargarNotificaciones();
+                    actualizarContadorNotificaciones();
+                });
+        }
+
+        function actualizarContadorNotificaciones() {
+            fetch('/notificaciones/no-leidas')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.querySelector('.notification-badge');
+                    if (data.cantidad > 0) {
+                        if (!badge) {
+                            const btn = document.querySelector('.btn-notifications');
+                            const newBadge = document.createElement('span');
+                            newBadge.className = 'notification-badge';
+                            newBadge.textContent = data.cantidad;
+                            btn.appendChild(newBadge);
+                        } else {
+                            badge.textContent = data.cantidad;
+                        }
+                    } else if (badge) {
+                        badge.remove();
+                    }
+                });
+        }
+
+        function verTodasNotificaciones(event) {
+            event.preventDefault();
+            showNotification('Funcionalidad en desarrollo', 'info');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification ' + type;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+
+        function abrirLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = src;
+            lightbox.style.display = 'flex';
+        }
+
+        function closeLightbox(event) {
+            if (!event || event.target === document.getElementById('lightbox') || event.target.classList.contains('close-lightbox')) {
+                document.getElementById('lightbox').style.display = 'none';
+            }
+        }
+
+        // ==================== FAVORITOS Y BÚSQUEDA ====================
+        document.addEventListener("click", function(e) {
+            if (e.target.classList.contains("favorite-star")) {
+                e.stopPropagation();
+                e.target.classList.toggle("active");
+                e.target.textContent = e.target.classList.contains("active") ? "★" : "☆";
+             
+                if (e.target.classList.contains("active")) {
+                    showNotification('Añadido a favoritos', 'success');
+                }
+            }
+        });
+
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+            searchInput.addEventListener("input", function() {
+                const value = this.value.toLowerCase();
+                document.querySelectorAll(".game-item").forEach(item => {
+                    const title = item.querySelector(".sidebar-title")?.textContent.toLowerCase() || '';
+                    item.style.display = title.includes(value) ? "flex" : "none";
+                });
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const juegoActivo = obtenerJuegoActivo();
+            let panelActivo = null;
+            
+            if (juegoActivo) {
+                const panel = document.getElementById("panel-" + juegoActivo);
+                const item = document.querySelector(`.game-item[data-id="${juegoActivo}"]`) || 
+                             document.querySelector(`.game-item[onclick*="${juegoActivo}"]`);
+                
+                if (panel && item) {
+                    panelActivo = panel;
+                    document.querySelectorAll(".game-panel").forEach(p => p.classList.remove("visible"));
+                    document.querySelectorAll(".game-item").forEach(i => i.classList.remove("active"));
+                    
+                    panel.classList.add("visible");
+                    item.classList.add("active");
+                    
+                    const banner = panel.querySelector(".game-banner");
+                    if (banner) {
+                        document.querySelector(".dynamic-bg").style.backgroundImage = banner.style.backgroundImage;
+                    }
+                    activarTrailer(panel);
+                }
+            }
+            
+            if (!panelActivo) {
+                const firstPanel = document.querySelector(".game-panel.visible");
+                if (firstPanel) {
+                    const banner = firstPanel.querySelector(".game-banner");
+                    if (banner) {
+                        document.querySelector(".dynamic-bg").style.backgroundImage = banner.style.backgroundImage;
+                    }
+                    activarTrailer(firstPanel);
+                }
+            }
+
+            iniciarTimers();
+
+            actualizarContadorNotificaciones();
+            notificacionesInterval = setInterval(actualizarContadorNotificaciones, 30000);
+        });
+
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('notificationsPanel');
+            const btn = document.querySelector('.btn-notifications');
+            
+            if (btn && panel && !btn.contains(event.target) && !panel.contains(event.target)) {
+                panel.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>
