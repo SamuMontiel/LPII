@@ -93,7 +93,7 @@ public class CarritoController {
     public ResponseEntity<byte[]> descargarFactura(Authentication authentication) throws Exception {
 
         Usuario usuario = usuarioService.buscarPorEmail(authentication.getName());
-
+//wawawa
         // Aquí deberías obtener la última compra guardada en historial
         // Por ahora usamos el carrito antes de vaciarlo si lo guardas en sesión
         List<Carrito> items = carritoService.obtenerItemsCompra(usuario);
